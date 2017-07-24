@@ -168,14 +168,14 @@ function shutdown(shutdown_callback = null) {
 		msg : 'Stopping',
 	});
 
-	json.reset(() => { // Reset status vars pertinent to launching app
-		json.write(() => { // Write JSON config and status files
-			interface.kbus.shutdown(() => { // Close KBUS serial port
-				interface.lcd.shutdown(() => { // Close USB LCD serial port
-					interface.ibus.shutdown(() => { // Close IBUS serial port
-						interface.dbus.shutdown(() => { // Close IBUS serial port
-							socket.shutdown(() => { // Close WebSocket server
-								host_data.term(() => { // Terminate host data timeout
+	interface.kbus.shutdown(() => { // Close KBUS serial port
+		interface.lcd.shutdown(() => { // Close USB LCD serial port
+			interface.ibus.shutdown(() => { // Close IBUS serial port
+				interface.dbus.shutdown(() => { // Close IBUS serial port
+					socket.shutdown(() => { // Close WebSocket server
+						host_data.term(() => { // Terminate host data timeout
+							json.reset(() => { // Reset status vars pertinent to launching app
+								json.write(() => { // Write JSON config and status files
 
 									if (typeof shutdown_callback === 'function') { shutdown_callback(); }
 									shutdown_callback = undefined;
