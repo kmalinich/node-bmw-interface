@@ -142,50 +142,50 @@ function send(buffer, waiter = false, callback = null) {
 		return false;
 	}
 
-  // Only write data if port is open
-  if (!check_open()) {
-    log.msg({ src : module_name, msg : 'Waiting for port to open' });
-    if (typeof callback === 'function') callback();
-    return false;
-  }
+	// Only write data if port is open
+	if (!check_open()) {
+		log.msg({ src : module_name, msg : 'Waiting for port to open' });
+		if (typeof callback === 'function') callback();
+		return false;
+	}
 
 	// Convert input to Buffer
 	buffer = Buffer.from(buffer);
 
-  if (interface[module_name].draining+interface[module_name].writing != 0) {
-    if (waiter === false) { interface[module_name].waiting++; }
+	if (interface[module_name].draining+interface[module_name].writing != 0) {
+		if (waiter === false) { interface[module_name].waiting++; }
 
-    setImmediate(() => {
-      send(buffer, true, callback);
-    });
-    return;
-  }
+		setImmediate(() => {
+			send(buffer, true, callback);
+		});
+		return;
+	}
 
-  if (waiter === true) { interface[module_name].waiting--; }
+	if (waiter === true) { interface[module_name].waiting--; }
 
-  interface[module_name].writing++;
-  interface[module_name].serial_port.write(buffer, (error) => {
-    interface[module_name].writing--;
+	interface[module_name].writing++;
+	interface[module_name].serial_port.write(buffer, (error) => {
+		interface[module_name].writing--;
 
-    if (error) error_out('writing', error);
+		if (error) error_out('writing', error);
 
-    if (interface[module_name].draining+interface[module_name].writing === 0) {
-      interface[module_name].draining++;
+		if (interface[module_name].draining+interface[module_name].writing === 0) {
+			interface[module_name].draining++;
 
-      interface[module_name].serial_port.drain((error) => {
-        interface[module_name].draining--;
+			interface[module_name].serial_port.drain((error) => {
+				interface[module_name].draining--;
 
-        if (error) error_out('draining', error);
+				if (error) error_out('draining', error);
 
-        if (interface.config.debug === true) {
-          log.msg({
-            src : module_name,
-            msg : 'Drain success '+buffer,
-          });
-        }
+				if (interface.config.debug === true) {
+					log.msg({
+						src : module_name,
+						msg : 'Drain success '+buffer,
+					});
+				}
 
-        if (typeof callback === 'function') callback();
-        return true;
+				if (typeof callback === 'function') callback();
+				return true;
 			});
 		}
 	});
@@ -198,17 +198,17 @@ function command(cmd, value = null, callback = null) {
 		return false;
 	}
 
-  // Only write data if port is open
-  if (!check_open()) {
-    log.msg({ src : module_name, msg : 'Waiting for port to open' });
-    if (typeof callback === 'function') callback();
-    return false;
-  }
+	// Only write data if port is open
+	if (!check_open()) {
+		log.msg({ src : module_name, msg : 'Waiting for port to open' });
+		if (typeof callback === 'function') callback();
+		return false;
+	}
 
-  log.module({
-    src : module_name,
-    msg : 'Command: '+cmd,
-  });
+	log.module({
+		src : module_name,
+		msg : 'Command: '+cmd,
+	});
 
 	switch (cmd) {
 		case 'autoscroll-off' : cmd = [0x52]; break;
@@ -226,14 +226,14 @@ function command(cmd, value = null, callback = null) {
 		case 'brightness'     : cmd = [0x99, value]; break;
 		case 'contrast'       : cmd = [0x50, value]; break;
 
-    default: cmd = [0x58]; // Default is clear display
+		default: cmd = [0x58]; // Default is clear display
 	}
 
-  // Add 0xFE (cmd code) at beginning of array
-  cmd.unshift(0xFE);
+	// Add 0xFE (cmd code) at beginning of array
+	cmd.unshift(0xFE);
 
-  // Send command
-  interface[module_name].send(cmd, false, callback);
+	// Send command
+	interface[module_name].send(cmd, false, callback);
 }
 
 // Separate set-color function for LCD since it has more input
@@ -243,20 +243,20 @@ function color(values) {
 		return false;
 	}
 
-  // Only write data if port is open
-  if (!check_open()) {
-    log.msg({ src : module_name, msg : 'Waiting for port to open' });
-    if (typeof callback === 'function') callback();
-    return false;
-  }
+	// Only write data if port is open
+	if (!check_open()) {
+		log.msg({ src : module_name, msg : 'Waiting for port to open' });
+		if (typeof callback === 'function') callback();
+		return false;
+	}
 
-  let command = [0xD0, values.r, values.g, values.b];
+	let command = [0xD0, values.r, values.g, values.b];
 
-  // Add 0xFE (cmd code) at beginning of array
-  cmd.unshift(0xFE);
+	// Add 0xFE (cmd code) at beginning of array
+	cmd.unshift(0xFE);
 
-  // Send command
-  interface[module_name].send(cmd, false, callback);
+	// Send command
+	interface[module_name].send(cmd, false, callback);
 }
 
 function text(data, callback = null) {
@@ -269,12 +269,12 @@ function text(data, callback = null) {
 		return false;
 	}
 
-  // Only write data if port is open
-  if (!check_open()) {
-    log.msg({ src : module_name, msg : 'Waiting for port to open' });
-    if (typeof callback === 'function') callback();
-    return false;
-  }
+	// Only write data if port is open
+	if (!check_open()) {
+		log.msg({ src : module_name, msg : 'Waiting for port to open' });
+		if (typeof callback === 'function') callback();
+		return false;
+	}
 
 	log.msg({
 		src : module_name,
@@ -309,18 +309,18 @@ function set_options(callback = null) {
 					interface[module_name].command('home', null, () => {
 						interface[module_name].command('clear', null, () => {
 
-								interface.lcd.text({
-									upper : 'bmwd',
-									lower : 'initialized',
-								});
+							interface.lcd.text({
+								upper : 'bmwd',
+								lower : 'initialized',
+							});
 
-								log.msg({
-									src : module_name,
-									msg : 'LCD configured',
-								});
+							log.msg({
+								src : module_name,
+								msg : 'LCD configured',
+							});
 
-								if (typeof callback === 'function') callback();
-								return true;
+							if (typeof callback === 'function') callback();
+							return true;
 						});
 					});
 				});
@@ -350,52 +350,52 @@ function startup(callback = null) {
 		if (error) {
 			error_out('opening interface', error);
 
-      if (typeof callback === 'function') callback();
-      return false;
-    }
+			if (typeof callback === 'function') callback();
+			return false;
+		}
 
-    set_options(() => {
-      if (typeof callback === 'function') callback();
-      return true;
-    });
-  });
+		set_options(() => {
+			if (typeof callback === 'function') callback();
+			return true;
+		});
+	});
 }
 
 // Close serial port
 function shutdown(callback = null) {
-  if (!check_config()) {
-    if (typeof callback === 'function') callback();
-    return false;
-  }
+	if (!check_config()) {
+		if (typeof callback === 'function') callback();
+		return false;
+	}
 
-  // Check if it's already closed
-  if (!check_open()) {
-    if (typeof callback === 'function') callback();
-    return false;
-  }
+	// Check if it's already closed
+	if (!check_open()) {
+		if (typeof callback === 'function') callback();
+		return false;
+	}
 
-  interface[module_name].command('clear', null, () => {
-    interface[module_name].command('off', null, () => {
+	interface[module_name].command('clear', null, () => {
+		interface[module_name].command('off', null, () => {
 
-      // Drain the port
-      interface[module_name].serial_port.drain((error) => {
-        // Close the port
-        interface[module_name].serial_port.close((error) => {
-          check_open();
+			// Drain the port
+			interface[module_name].serial_port.drain((error) => {
+				// Close the port
+				interface[module_name].serial_port.close((error) => {
+					check_open();
 
-          if (error) {
-            error_out('closing port', error);
+					if (error) {
+						error_out('closing port', error);
 
-            if (typeof callback === 'function') callback();
-            return false;
-          }
+						if (typeof callback === 'function') callback();
+						return false;
+					}
 
-          if (typeof callback === 'function') callback();
-          return true;
-        });
-      });
-    });
-  });
+					if (typeof callback === 'function') callback();
+					return true;
+				});
+			});
+		});
+	});
 }
 
 module.exports = {
@@ -415,7 +415,7 @@ module.exports = {
 
 	send : (buffer, waiter, callback) => { send(buffer, waiter, callback); },
 
-  // LCD functions
+	// LCD functions
 	command : (cmd, value, callback) => { command(cmd, value, callback); },
 	color   : (values, callback)     => { values(values, callback);      },
 	text    : (data, callback)       => { text(data, callback);          },

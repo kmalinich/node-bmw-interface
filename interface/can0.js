@@ -3,108 +3,108 @@ const module_name = __filename.slice(__dirname.length + 1, -3);
 
 // Output formatted error message
 function error_out(message, error, callback = null) {
-  var error_fmt = error.toString().replace(/Error:\ /, '').replace(/Error:\ /, '').trim();
+	var error_fmt = error.toString().replace(/Error:\ /, '').replace(/Error:\ /, '').trim();
 
-  log.msg({
-    src : module_name,
-    msg : 'Error '+message+': '+error_fmt,
-  });
+	log.msg({
+		src : module_name,
+		msg : 'Error '+message+': '+error_fmt,
+	});
 
-  if (typeof callback === 'function') callback();
-  return true;
+	if (typeof callback === 'function') callback();
+	return true;
 }
 
 // Check if we're configured to use this bus, set status var, and return
 function check_config(callback = null) {
-  if (config.interface[module_name] === null) {
-    update_configured(false);
-    if (typeof callback === 'function') callback();
-    callback = undefined;
-    return update_status(false);
-  }
+	if (config.interface[module_name] === null) {
+		update_configured(false);
+		if (typeof callback === 'function') callback();
+		callback = undefined;
+		return update_status(false);
+	}
 
-  if (typeof callback === 'function') callback();
-  callback = undefined;
-  return true;
+	if (typeof callback === 'function') callback();
+	callback = undefined;
+	return true;
 }
 
 
 // Check if the interface has been initialized yet
 function check_configured(callback = null) {
-  if (!check_config()) {
-    if (typeof callback === 'function') callback();
-    callback = undefined;
-    return update_configured(false);
-  }
+	if (!check_config()) {
+		if (typeof callback === 'function') callback();
+		callback = undefined;
+		return update_configured(false);
+	}
 
-  if (status.interface[module_name].configured === false) {
-    if (typeof callback === 'function') callback();
-    callback = undefined;
-    return update_configured(false);
-  }
+	if (status.interface[module_name].configured === false) {
+		if (typeof callback === 'function') callback();
+		callback = undefined;
+		return update_configured(false);
+	}
 
-  if (typeof callback === 'function') callback();
-  callback = undefined;
-  return true;
+	if (typeof callback === 'function') callback();
+	callback = undefined;
+	return true;
 }
 
 
 // Check if the interface configured is changed before setting,
 // if changed, show message
 function update_configured(new_configured, callback = null) {
-  if (status.interface[module_name].configured !== new_configured) {
-    if (interface.config.debug === true) {
-      log.change({
-        src   : module_name,
-        value : 'Interface configured',
-        old   : status.interface[module_name].configured,
-        new   : new_configured,
-      });
-    }
+	if (status.interface[module_name].configured !== new_configured) {
+		if (interface.config.debug === true) {
+			log.change({
+				src   : module_name,
+				value : 'Interface configured',
+				old   : status.interface[module_name].configured,
+				new   : new_configured,
+			});
+		}
 
-    // Update status var
-    status.interface[module_name].configured = new_configured;
-  }
+		// Update status var
+		status.interface[module_name].configured = new_configured;
+	}
 
-  if (typeof callback === 'function') callback();
-  callback = undefined;
-  return status.interface[module_name].configured;
+	if (typeof callback === 'function') callback();
+	callback = undefined;
+	return status.interface[module_name].configured;
 }
 
 // Check if the interface status is changed before setting,
 // if changed, show message
 function update_status(new_status, callback = null) {
-  if (status.interface[module_name].up !== new_status) {
-    log.change({
-      src   : module_name,
-      value : 'Interface open',
-      old   : status.interface[module_name].up,
-      new   : new_status,
-    });
+	if (status.interface[module_name].up !== new_status) {
+		log.change({
+			src   : module_name,
+			value : 'Interface open',
+			old   : status.interface[module_name].up,
+			new   : new_status,
+		});
 
-    // Update status var
-    status.interface[module_name].up = new_status;
+		// Update status var
+		status.interface[module_name].up = new_status;
 
-    if (status.interface[module_name].up === false) {
-      log.msg({
-        src : module_name,
-        msg : 'Port closed',
-      });
-    }
-  }
+		if (status.interface[module_name].up === false) {
+			log.msg({
+				src : module_name,
+				msg : 'Port closed',
+			});
+		}
+	}
 
-  if (typeof callback === 'function') callback();
-  callback = undefined;
-  return status.interface[module_name].up;
+	if (typeof callback === 'function') callback();
+	callback = undefined;
+	return status.interface[module_name].up;
 }
 
 
 // Setup/configure interface
 function configure_port(callback = null) {
-  if (!check_config()) {
-    if (typeof callback === 'function') callback();
-    return false;
-  }
+	if (!check_config()) {
+		if (typeof callback === 'function') callback();
+		return false;
+	}
 
 	// Pull in rawcan library
 	const can = require('rawcan');
@@ -127,21 +127,21 @@ function configure_port(callback = null) {
 		socket.bus_rx(msg);
 	});
 
-  // Set init status var
-  update_configured(true);
+	// Set init status var
+	update_configured(true);
 
-  if (typeof callback === 'function') callback();
+	if (typeof callback === 'function') callback();
 	callback = undefined;
-  return true;
+	return true;
 }
 
 
 // Write an object to the interface
 function send(object, callback = null) {
-  if (!check_config()) {
-    if (typeof callback === 'function') callback();
-    return false;
-  }
+	if (!check_config()) {
+		if (typeof callback === 'function') callback();
+		return false;
+	}
 
 	// Object example:
 	// interface[module_name].socket.send({
@@ -181,5 +181,5 @@ module.exports = {
 	// Functions
 	check_config : (callback)         => { check_config(callback); },
 	send         : (object, callback) => { send(object, callback); },
-  startup      : (callback)         => { startup(callback);      },
+	startup      : (callback)         => { startup(callback);      },
 };
