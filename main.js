@@ -4,7 +4,8 @@ app_path = __dirname;
 app_name = 'bmwi';
 app_intf = process.argv[2] || process.env.BMWI_INTERFACE || null;
 app_type = app_intf;
-console.dir(process.argv);
+
+process.title = app_name+'@'+app_type;
 
 // npm libraries
 now = require('performance-now');
