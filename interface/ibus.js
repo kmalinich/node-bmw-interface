@@ -193,7 +193,7 @@ function send(buffer, waiter = false, callback = null) {
 }
 
 // Open serial port
-function startup(callback = null) {
+function init(callback = null) {
 	// Don't continue unless configured to use this port
 	if (!configure_port()) {
 		if (typeof callback === 'function') callback();
@@ -245,7 +245,7 @@ function set_options(callback = null) {
 }
 
 // Close serial port
-function shutdown(callback = null) {
+function term(callback = null) {
 	if (!check_config()) {
 		if (typeof callback === 'function') callback();
 		return false;
@@ -289,6 +289,6 @@ module.exports = {
 	check_config : (callback)         => { check_config(callback); },
 	check_open   : (callback)         => { check_open(callback);   },
 	send         : (buffer, callback) => { send(buffer, callback); },
-	shutdown     : (callback)         => { shutdown(callback);     },
-	startup      : (callback)         => { startup(callback);      },
+	term         : (callback)         => { term(callback);         },
+	init         : (callback)         => { init(callback);         },
 };
