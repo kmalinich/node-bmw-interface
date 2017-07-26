@@ -2,8 +2,9 @@ const module_name = __filename.slice(__dirname.length + 1, -3);
 
 app_path = __dirname;
 app_name = 'bmwi';
-app_type = 'interface';
 app_intf = process.argv[2] || process.env.BMWI_INTERFACE || null;
+app_type = app_intf;
+console.dir(process.argv);
 
 // npm libraries
 now = require('performance-now');
@@ -16,39 +17,32 @@ hex     = require('hex');
 json    = require('json');
 log     = require('log-output');
 socket  = require('socket');
+update  = require('update');
 
 bus_arbids  = require('bus-arbids');  // CANBUS ARBIDs
 bus_data    = require('bus-data');    // Data sender/router (based on dst)
 bus_modules = require('bus-modules'); // DBUS/IBUS/KBUS module IDs
 
 
-// Configure shutdown event listeners
-function shutdown_config(shutdown_config_callback = null) {
-	process.on('SIGTERM', () => {
-		log.msg({
-			src : module_name,
-			msg : 'Received SIGTERM, launching shutdown()',
-		});
-		shutdown();
-	});
+// Configure term event listeners
+function term_config(pass) {
+  process.on('SIGTERM', () => {
+    console.log('');
+    log.msg({ src : module_name, msg : 'Caught SIGTERM' });
+    term();
+  });
 
-	process.on('SIGINT', () => {
-		log.msg({
-			src : module_name,
-			msg : 'Received SIGINT, launching shutdown()',
-		});
-		shutdown();
-	});
+  process.on('SIGINT', () => {
+    console.log('');
+    log.msg({ src : module_name, msg : 'Caught SIGINT' });
+    term();
+  });
 
-	process.on('exit', () => {
-		log.msg({
-			src : module_name,
-			msg : 'Shut down',
-		});
-	});
+  process.on('exit', () => {
+    log.msg({ src : module_name, msg : 'Terminated' });
+  });
 
-	if (typeof shutdown_config_callback === 'function') { shutdown_config_callback(); }
-	shutdown_config_callback = undefined;
+  pass();
 }
 
 // Render serialport options object
@@ -133,25 +127,25 @@ function load_modules(load_modules_callback = null) {
 }
 
 
-// Global startup
-function startup(startup_callback = null) {
+// Global init
+function init(init_callback = null) {
 	log.msg({
 		src : module_name,
-		msg : 'Starting',
+		msg : 'Initializing',
 	});
 
 	json.read(() => { // Read JSON config and status files
 		json.reset(() => { // Reset status vars pertinent to launching app
 			load_modules(() => { // Load IBUS module node modules
 				host_data.init(() => { // Initialize host data object
-					socket.startup(() => { // Open WebSocket server
+					socket.init(() => { // Open zeroMQ server
 
-						interface[app_intf].startup(() => { // Open defined interface
+						interface[app_intf].init(() => { // Open defined interface
 
-							if (typeof startup_callback === 'function') { startup_callback(); }
-							startup_callback = undefined;
+							if (typeof init_callback === 'function') { init_callback(); }
+							init_callback = undefined;
 
-							log.msg({ src : module_name, msg : 'Started' });
+							log.msg({ src : module_name, msg : 'Initialized' });
 
 						});
 					});
@@ -161,26 +155,26 @@ function startup(startup_callback = null) {
 	});
 }
 
-// Global shutdown
-function shutdown(shutdown_callback = null) {
+// Global term
+function term(term_callback = null) {
 	log.msg({
 		src : module_name,
 		msg : 'Stopping',
 	});
 
-	interface.kbus.shutdown(() => { // Close KBUS serial port
-		interface.lcd.shutdown(() => { // Close USB LCD serial port
-			interface.ibus.shutdown(() => { // Close IBUS serial port
-				interface.dbus.shutdown(() => { // Close IBUS serial port
-					socket.shutdown(() => { // Close WebSocket server
+	interface.kbus.term(() => { // Close KBUS serial port
+		interface.lcd.term(() => { // Close USB LCD serial port
+			interface.ibus.term(() => { // Close IBUS serial port
+				interface.dbus.term(() => { // Close IBUS serial port
+					socket.term(() => { // Close zeroMQ server
 						host_data.term(() => { // Terminate host data timeout
 							json.reset(() => { // Reset status vars pertinent to launching app
 								json.write(() => { // Write JSON config and status files
 
-									if (typeof shutdown_callback === 'function') { shutdown_callback(); }
-									shutdown_callback = undefined;
+									if (typeof term_callback === 'function') { term_callback(); }
+									term_callback = undefined;
 
-									log.msg({ src : module_name, msg : 'Stopped' });
+									log.msg({ src : module_name, msg : 'Terminated' });
 									process.exit();
 
 								});
@@ -195,6 +189,6 @@ function shutdown(shutdown_callback = null) {
 
 
 // FASTEN SEATBELTS
-shutdown_config(() => {
-	startup();
+term_config(() => {
+	init();
 });

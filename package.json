@@ -22,17 +22,17 @@
     "url": "https://github.com/kmalinich/node-bmw-interface/issues"
   },
   "dependencies": {
+    "amp-message": "^0.1.2",
     "chump": "^1.2.0",
     "defaults-deep": "^0.2.3",
     "jsonfile": "^3.0.1",
-    "microtime": "^2.1.6",
     "multipad": "^1.1.1",
     "object-path": "^0.11.4",
     "pad": "^1.1.0",
     "performance-now": "^2.1.0",
     "serialport": "^5.0.0-beta8",
-    "socket.io": "^2.0.3",
-    "trucolor": "^0.6.6"
+    "trucolor": "^0.6.6",
+    "zeromq": "^4.5.0"
   },
   "optionalDependencies": {
     "rawcan": "^1.1.4",
