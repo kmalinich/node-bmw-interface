@@ -276,6 +276,12 @@ function text(data, callback = null) {
 		return false;
 	}
 
+	// Replace weird IKE degree symbol
+	data.upper = data.upper.replace(/¨/, 'C').trim();
+	data.lower = data.lower.replace(/¨/, 'C').trim();
+	data.upper = data.lower;
+	data.lower = status.system.temperature+'C|'+status.system.cpu.load_pct+'%';
+
 	log.msg({
 		src : module_name,
 		msg : 'Text: \''+data.upper+' '+data.lower+'\'',
@@ -284,7 +290,7 @@ function text(data, callback = null) {
 	// This data needs to be put in status variable like MID text
 	// tder string + trim to 16 chars
 	data.upper = pad(data.upper.substring(0, 16), 16);
-	data.lower = pad(data.lower.substring(0, 16), 16);
+	data.lower = pad(16, data.lower.substring(0, 16));
 
 	// Center string + trim to 16 chars
 	// data.upper = align.center(data.upper.substring(0, 16), 16, ' ');
@@ -292,11 +298,13 @@ function text(data, callback = null) {
 
 	string = data.upper+data.lower;
 
+	interface[module_name].command('clear', null, () => {
 	interface[module_name].command('home', null, () => {
 		interface[module_name].send(string, null, () => {
 			if (typeof callback === 'function') callback();
 			return true;
 		});
+	});
 	});
 }
 
@@ -310,9 +318,17 @@ function set_options(callback = null) {
 						interface[module_name].command('clear', null, () => {
 
 							interface.lcd.text({
-								upper : 'bmwd',
+								upper : 'bmwi@lcd',
 								lower : 'initialized',
 							});
+
+							// Turn the LCD back off after a few seconds
+							// setTimeout(() => {
+							// 	interface[module_name].command('clear', null, () => {
+							// 		interface[module_name].command('off', null, () => {
+							// 		});
+							// 	});
+							// }, 10000);
 
 							log.msg({
 								src : module_name,
@@ -416,7 +432,7 @@ module.exports = {
 	send : (buffer, waiter, callback) => { send(buffer, waiter, callback); },
 
 	// LCD functions
+	color   : (values, callback)     => { color(values, callback);       },
 	command : (cmd, value, callback) => { command(cmd, value, callback); },
-	color   : (values, callback)     => { values(values, callback);      },
 	text    : (data, callback)       => { text(data, callback);          },
 };
