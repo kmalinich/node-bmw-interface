@@ -27,23 +27,23 @@ bus_modules = require('bus-modules'); // DBUS/IBUS/KBUS module IDs
 
 // Configure term event listeners
 function term_config(pass) {
-  process.on('SIGTERM', () => {
-    console.log('');
-    log.msg({ src : module_name, msg : 'Caught SIGTERM' });
-    term();
-  });
+	process.on('SIGTERM', () => {
+		console.log('');
+		log.msg({ src : module_name, msg : 'Caught SIGTERM' });
+		term();
+	});
 
-  process.on('SIGINT', () => {
-    console.log('');
-    log.msg({ src : module_name, msg : 'Caught SIGINT' });
-    term();
-  });
+	process.on('SIGINT', () => {
+		console.log('');
+		log.msg({ src : module_name, msg : 'Caught SIGINT' });
+		term();
+	});
 
-  process.on('exit', () => {
-    log.msg({ src : module_name, msg : 'Terminated' });
-  });
+	process.on('exit', () => {
+		log.msg({ src : module_name, msg : 'Terminated' });
+	});
 
-  pass();
+	pass();
 }
 
 // Render serialport options object
