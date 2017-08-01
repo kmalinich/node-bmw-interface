@@ -1,19 +1,6 @@
 const module_name = __filename.slice(__dirname.length + 1, -3);
 
 
-// Output formatted error message
-function error_out(message, error, callback = null) {
-	var error_fmt = error.toString().replace(/Error:\ /, '').replace(/Error:\ /, '').trim();
-
-	log.msg({
-		src : module_name,
-		msg : 'Error '+message+': '+error_fmt,
-	});
-
-	if (typeof callback === 'function') callback();
-	return true;
-}
-
 // Check if we're configured to use this bus, set status var, and return
 function check_config(callback = null) {
 	if (config.interface[module_name] === null) {
@@ -157,7 +144,7 @@ function send(object, callback = null) {
 
 
 // Open interface/socket
-function startup(callback = null) {
+function init(callback = null) {
 	// Don't continue unless configured to use this port
 	if (!configure_port()) {
 		if (typeof callback === 'function') callback();
@@ -165,8 +152,6 @@ function startup(callback = null) {
 		return false;
 	}
 
-	// Start the interface
-	// interface[module_name].socket.start();
 	update_status(true);
 
 	if (typeof callback === 'function') { callback(); }
@@ -181,5 +166,5 @@ module.exports = {
 	// Functions
 	check_config : (callback)         => { check_config(callback); },
 	send         : (object, callback) => { send(object, callback); },
-	startup      : (callback)         => { startup(callback);      },
+	init         : (callback)         => { init(callback);         },
 };
