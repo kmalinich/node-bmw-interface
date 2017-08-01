@@ -1,10 +1,12 @@
 const module_name = __filename.slice(__dirname.length + 1, -3);
-const serialport  = require('serialport');
+const status_path = 'status.interface.'+module_name+'.';
+
+const serialport = require('serialport');
 
 
 // Output formatted error message
 function error_out(message, error, callback = null) {
-	var error_fmt = error.toString().replace(/Error:\ /, '').replace(/Error:\ /, '').trim();
+	let error_fmt = error.toString().replace(/Error:\ /, '').replace(/Error:\ /, '').trim();
 
 	log.msg({
 		src : module_name,
@@ -121,7 +123,7 @@ function configure_port(callback = null) {
 	// Send data to the parser
 	interface[module_name].serial_port.on('data', (data) => {
 		// Loop to send it one byte at a time
-		for (var byte = 0; byte < data.length; byte++) {
+		for (let byte = 0; byte < data.length; byte++) {
 			protocol[module_name].pusher(data[byte]);
 		}
 	});

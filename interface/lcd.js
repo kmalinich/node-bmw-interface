@@ -1,4 +1,5 @@
 const module_name = __filename.slice(__dirname.length + 1, -3);
+const status_path = 'status.interface.'+module_name+'.';
 
 const align      = require('multipad');
 const serialport = require('serialport');
@@ -6,7 +7,7 @@ const serialport = require('serialport');
 
 // Output formatted error message
 function error_out(message, error, callback = null) {
-	var error_fmt = error.toString().replace(/Error:\ /, '').replace(/Error:\ /, '').trim();
+	let error_fmt = error.toString().replace(/Error:\ /, '').replace(/Error:\ /, '').trim();
 
 	log.msg({
 		src : module_name,

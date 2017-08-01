@@ -1,4 +1,5 @@
 const module_name = __filename.slice(__dirname.length + 1, -3);
+const status_path = 'status.interface.'+module_name+'.';
 
 
 // Check if we're configured to use this bus, set status var, and return

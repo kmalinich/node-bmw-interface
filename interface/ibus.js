@@ -1,10 +1,11 @@
 const module_name = __filename.slice(__dirname.length + 1, -3);
 const serialport  = require('serialport');
+const status_path = 'status.interface.'+module_name+'.';
 
 
 // Output formatted error message
 function error_out(message, error, callback = null) {
-	var error_fmt = error.toString().replace(/Error:\ /, '').replace(/Error:\ /, '').trim();
+	let error_fmt = error.toString().replace(/Error:\ /, '').replace(/Error:\ /, '').trim();
 
 	log.msg({
 		src : module_name,
@@ -79,24 +80,7 @@ function update_configured(new_configured, callback = null) {
 // Check if the interface status is changed before setting,
 // if changed, show message
 function update_status(new_status, callback = null) {
-	if (status.interface[module_name].up !== new_status) {
-		log.change({
-			src   : module_name,
-			value : 'Interface open',
-			old   : status.interface[module_name].up,
-			new   : new_status,
-		});
-
-		// Update status var
-		status.interface[module_name].up = new_status;
-
-		if (status.interface[module_name].up === false) {
-			log.msg({
-				src : module_name,
-				msg : 'Port closed',
-			});
-		}
-	}
+	update.status(status_path+'up', new_status)
 
 	if (typeof callback === 'function') callback();
 	return status.interface[module_name].up;
@@ -124,7 +108,7 @@ function configure_port(callback = null) {
 	// Send data to the parser
 	interface[module_name].serial_port.on('data', (data) => {
 		// Loop to send it one byte at a time
-		for (var byte = 0; byte < data.length; byte++) {
+		for (let byte = 0; byte < data.length; byte++) {
 			protocol[module_name].pusher(data[byte]);
 		}
 	});
