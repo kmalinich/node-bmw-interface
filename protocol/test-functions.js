@@ -47,7 +47,7 @@ function validate(msg) {
 	};
 
 	// Add key for fully valid
-	msg.valid.full = Object.keys(msg.valid).every((k) => { return msg.valid[k] === true });
+	msg.valid.full = Object.keys(msg.valid).every((k) => { return msg.valid[k] === true; });
 
 	return msg;
 }

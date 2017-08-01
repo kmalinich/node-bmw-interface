@@ -51,7 +51,7 @@ function validate(msg) {
 	};
 
 	// Add key for fully valid
-	msg.valid.full = Object.keys(msg.valid).every((k) => { return msg.valid[k] === true });
+	msg.valid.full = Object.keys(msg.valid).every((k) => { return msg.valid[k] === true; });
 
 	return msg;
 }
@@ -115,7 +115,7 @@ function check_queue_input() {
 		protocol[module_name].parsing = false;
 		clear_all('Too many errors');
 		return false;
-	};
+	}
 
 	// Check if the input queue is too long (buffer overflow/parse error)
 	if (protocol[module_name].queue_input.length >= protocol.config.length_max) {

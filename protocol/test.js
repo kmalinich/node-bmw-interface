@@ -8,9 +8,9 @@ var api_socket_key_last = 0;
 var api_socket_map      = {};
 api_server              = http.createServer(api_handler);
 var api_header          = {
-'Content-Type'  : 'application/json',
-'Cache-Control' : 'no-cache',
-}
+	'Content-Type'  : 'application/json',
+	'Cache-Control' : 'no-cache',
+};
 
 // npm libraries
 now = require('performance-now');
