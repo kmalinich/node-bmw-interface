@@ -31,7 +31,6 @@ function check_config() {
 
 // Check if the port is open, set status var, and return
 function check_open() {
-	console.log('check_open');
 	update.status(status_path+'up', intf[module_name].serial_port.isOpen);
 	return status.intf[module_name].up;
 }
@@ -55,9 +54,9 @@ function configure_port(callback = null) {
 	});
 
 	// Send data to the parser
-	intf[module_name].serial_port.on('readable', () => {
+	intf[module_name].serial_port.on('data', (data) => {
 		// Get readable data from serial port
-		let data = intf[module_name].serial_port.read();
+		// let data = intf[module_name].serial_port.read();
 
 		// If it isn't null...
 		if (data !== null) {
