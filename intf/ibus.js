@@ -1,28 +1,25 @@
 const module_name = __filename.slice(__dirname.length + 1, -3);
-const status_path = 'status.interface.'+module_name+'.';
-
-const serialport = require('serialport');
+const serialport  = require('serialport');
+const status_path = 'status.intf.'+module_name+'.';
 
 
 // Output formatted error message
 function error_out(message, error, callback = null) {
-	let error_fmt = error.toString().replace(/Error:\ /, '').replace(/Error:\ /, '').trim();
+	let error_fmt = error.toString().replace(/Error: /, '').replace(/Error: /, '').trim();
 
-	log.msg({
-		src : module_name,
-		msg : 'Error '+message+': '+error_fmt,
-	});
+	log.msg({ msg : 'Error '+message+': '+error_fmt });
 
 	if (typeof callback === 'function') callback();
 	return true;
 }
 
+
 // Check if we're configured to use this bus, set status var, and return
 function check_config(callback = null) {
-	if (config.interface[module_name] === null) {
-		update_configured(false);
+	if (config.intf[module_name] === null) {
+		update.status(status_path+'configured', false);
 		if (typeof callback === 'function') callback();
-		return update_status(false);
+		return update.status(status_path+'up', false);
 	}
 
 	if (typeof callback === 'function') callback();
@@ -33,12 +30,12 @@ function check_config(callback = null) {
 function check_configured(callback = null) {
 	if (!check_config()) {
 		if (typeof callback === 'function') callback();
-		return update_configured(false);
+		return update.status(status_path+'configured', false);
 	}
 
-	if (status.interface[module_name].configured === false) {
+	if (status.intf[module_name].configured === false) {
 		if (typeof callback === 'function') callback();
-		return update_configured(false);
+		return update.status(status_path+'configured', false);
 	}
 
 	if (typeof callback === 'function') callback();
@@ -49,57 +46,12 @@ function check_configured(callback = null) {
 function check_open(callback = null) {
 	if (!check_configured()) return false;
 	if (typeof callback === 'function') callback();
-	if (interface[module_name].serial_port !== null) {
-		return update_status(interface[module_name].serial_port.isOpen);
-	}
-	return update_status(false);
-}
 
-// Check if the interface configured is changed before setting,
-// if changed, show message
-function update_configured(new_configured, callback = null) {
-	if (status.interface[module_name].configured !== new_configured) {
-		if (interface.config.debug === true) {
-			log.change({
-				src   : module_name,
-				value : 'Interface configured',
-				old   : status.interface[module_name].configured,
-				new   : new_configured,
-			});
-		}
-
-		// Update status var
-		status.interface[module_name].configured = new_configured;
+	if (intf[module_name].serial_port !== null) {
+		return update.status(status_path+'up', intf[module_name].serial_port.isOpen);
 	}
 
-	if (typeof callback === 'function') callback();
-	return status.interface[module_name].configured;
-}
-
-// Check if the interface status is changed before setting,
-// if changed, show message
-function update_status(new_status, callback = null) {
-	if (status.interface[module_name].up !== new_status) {
-		log.change({
-			src   : module_name,
-			value : 'Interface open',
-			old   : status.interface[module_name].up,
-			new   : new_status,
-		});
-
-		// Update status var
-		status.interface[module_name].up = new_status;
-
-		if (status.interface[module_name].up === false) {
-			log.msg({
-				src : module_name,
-				msg : 'Port closed',
-			});
-		}
-	}
-
-	if (typeof callback === 'function') callback();
-	return status.interface[module_name].up;
+	return update.status(status_path+'up', false);
 }
 
 // Setup/configure serial port
@@ -109,32 +61,41 @@ function configure_port(callback = null) {
 		return false;
 	}
 
-	let intf_path = config.interface[module_name];
-	let intf_opts = interface.options[module_name].init;
-	interface[module_name].serial_port = new serialport(intf_path, intf_opts);
+	let intf_path = config.intf[module_name];
+	let intf_opts = intf.options[module_name].init;
+	intf[module_name].serial_port = new serialport(intf_path, intf_opts);
 
 	// Events
-	interface[module_name].serial_port.on('error', (error) => {
+	intf[module_name].serial_port.on('error', (error) => {
 		// On port error
 		check_open();
 		error_out('in port', error);
 	});
 
 	// Send data to the parser
-	interface[module_name].serial_port.on('data', (data) => {
-		// Loop to send it one byte at a time
-		for (let byte = 0; byte < data.length; byte++) {
-			protocol[module_name].pusher(data[byte]);
+	intf[module_name].serial_port.on('readable', () => {
+		// Get readable data from serial port
+		let data = intf[module_name].serial_port.read();
+
+		// If it isn't null...
+		if (data !== null) {
+			// Loop to send it one byte at a time to the parser
+			// TODO : This is probably a kludge due to not using the
+			// ill-documented .setEncoding() function
+			for (let byte = 0; byte < data.length; byte++) {
+				protocol[module_name].pusher(data[byte]);
+			}
 		}
 	});
 
-	interface[module_name].serial_port.on('close', () => {
-		// On port close
+	// On port close
+	intf[module_name].serial_port.on('close', () => {
+		// Make sure it's closed
 		check_open();
 	});
 
 	// Set init status var
-	update_configured(true);
+	update.status(status_path+'configured', true);
 
 	if (typeof callback === 'function') callback();
 	return true;
@@ -154,8 +115,8 @@ function send(buffer, waiter = false, callback = null) {
 		return false;
 	}
 
-	if (interface[module_name].draining+interface[module_name].writing != 0) {
-		if (waiter === false) { interface[module_name].waiting++; }
+	if (intf[module_name].draining+intf[module_name].writing != 0) {
+		if (waiter === false) { intf[module_name].waiting++; }
 
 		setImmediate(() => {
 			send(buffer, true, callback);
@@ -163,26 +124,25 @@ function send(buffer, waiter = false, callback = null) {
 		return;
 	}
 
-	if (waiter === true) { interface[module_name].waiting--; }
+	if (waiter === true) { intf[module_name].waiting--; }
 
-	interface[module_name].writing++;
-	interface[module_name].serial_port.write(protocol[module_name].create(buffer), (error) => {
-		interface[module_name].writing--;
+	intf[module_name].writing++;
+	intf[module_name].serial_port.write(protocol[module_name].create(buffer), (error) => {
+		intf[module_name].writing--;
 
 		if (error) error_out('writing', error);
 
-		if (interface[module_name].draining+interface[module_name].writing === 0) {
-			interface[module_name].draining++;
+		if (intf[module_name].draining+intf[module_name].writing === 0) {
+			intf[module_name].draining++;
 
-			interface[module_name].serial_port.drain((error) => {
-				interface[module_name].draining--;
+			intf[module_name].serial_port.drain((error) => {
+				intf[module_name].draining--;
 
 				if (error) error_out('draining', error);
 
-				if (interface.config.debug === true) {
+				if (intf.config.debug == true) {
 					log.msg({
-						src : module_name,
-						msg : 'Drain success '+buffer,
+						msg : 'Drain success',
 					});
 				}
 			});
@@ -205,7 +165,7 @@ function init(callback = null) {
 	}
 
 	// Open the port
-	interface[module_name].serial_port.open((error) => {
+	intf[module_name].serial_port.open((error) => {
 		check_open();
 
 		if (error) {
@@ -224,7 +184,7 @@ function init(callback = null) {
 
 // Set serial port options
 function set_options(callback = null) {
-	interface[module_name].serial_port.set(interface.options[module_name].open, (error) => {
+	intf[module_name].serial_port.set(intf.options[module_name].open, (error) => {
 		if (error) {
 			error_out('setting options', error);
 
@@ -233,7 +193,6 @@ function set_options(callback = null) {
 		}
 
 		log.msg({
-			src : module_name,
 			msg : 'Interface options set',
 		});
 
@@ -256,9 +215,11 @@ function term(callback = null) {
 	}
 
 	// Drain the port
-	interface[module_name].serial_port.drain((error) => {
+	intf[module_name].serial_port.drain((error) => {
+		if (error) error_out('draining', error);
+
 		// Close the port
-		interface[module_name].serial_port.close((error) => {
+		intf[module_name].serial_port.close((error) => {
 			check_open();
 
 			if (error) {
@@ -288,5 +249,5 @@ module.exports = {
 	check_open   : (callback)         => { check_open(callback);   },
 	send         : (buffer, callback) => { send(buffer, callback); },
 	term         : (callback)         => { term(callback);         },
-	init         : (callback)         => { init(callback);          },
+	init         : (callback)         => { init(callback);         },
 };

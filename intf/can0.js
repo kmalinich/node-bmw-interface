@@ -1,10 +1,10 @@
 const module_name = __filename.slice(__dirname.length + 1, -3);
-const status_path = 'status.interface.'+module_name+'.';
+const status_path = 'status.intf.'+module_name+'.';
 
 
 // Check if we're configured to use this bus, set status var, and return
 function check_config(callback = null) {
-	if (config.interface[module_name] === null) {
+	if (config.intf[module_name] === null) {
 		update_configured(false);
 		if (typeof callback === 'function') callback();
 		callback = undefined;
@@ -25,7 +25,7 @@ function check_configured(callback = null) {
 		return update_configured(false);
 	}
 
-	if (status.interface[module_name].configured === false) {
+	if (status.intf[module_name].configured === false) {
 		if (typeof callback === 'function') callback();
 		callback = undefined;
 		return update_configured(false);
@@ -40,40 +40,40 @@ function check_configured(callback = null) {
 // Check if the interface configured is changed before setting,
 // if changed, show message
 function update_configured(new_configured, callback = null) {
-	if (status.interface[module_name].configured !== new_configured) {
-		if (interface.config.debug === true) {
+	if (status.intf[module_name].configured !== new_configured) {
+		if (intf.config.debug === true) {
 			log.change({
 				src   : module_name,
 				value : 'Interface configured',
-				old   : status.interface[module_name].configured,
+				old   : status.intf[module_name].configured,
 				new   : new_configured,
 			});
 		}
 
 		// Update status var
-		status.interface[module_name].configured = new_configured;
+		status.intf[module_name].configured = new_configured;
 	}
 
 	if (typeof callback === 'function') callback();
 	callback = undefined;
-	return status.interface[module_name].configured;
+	return status.intf[module_name].configured;
 }
 
 // Check if the interface status is changed before setting,
 // if changed, show message
 function update_status(new_status, callback = null) {
-	if (status.interface[module_name].up !== new_status) {
+	if (status.intf[module_name].up !== new_status) {
 		log.change({
 			src   : module_name,
 			value : 'Interface open',
-			old   : status.interface[module_name].up,
+			old   : status.intf[module_name].up,
 			new   : new_status,
 		});
 
 		// Update status var
-		status.interface[module_name].up = new_status;
+		status.intf[module_name].up = new_status;
 
-		if (status.interface[module_name].up === false) {
+		if (status.intf[module_name].up === false) {
 			log.msg({
 				src : module_name,
 				msg : 'Port closed',
@@ -83,7 +83,7 @@ function update_status(new_status, callback = null) {
 
 	if (typeof callback === 'function') callback();
 	callback = undefined;
-	return status.interface[module_name].up;
+	return status.intf[module_name].up;
 }
 
 
@@ -98,16 +98,16 @@ function configure_port(callback = null) {
 	const can = require('rawcan');
 
 	// Create raw CAN socket
-	interface[module_name].socket = can.createSocket(config.interface[module_name], true);
+	intf[module_name].socket = can.createSocket(config.intf[module_name], true);
 
 	// Respond to incoming CAN messages
-	interface[module_name].socket.on('message', (id, data) => {
+	intf[module_name].socket.on('message', (id, data) => {
 		let msg = {
 			bus : module_name,
 			msg : data,
 			src : {
 				id   : id,
-				name : bus_arbids.h2n(id),
+				name : bus.arbids.h2n(id),
 			},
 		};
 
@@ -132,12 +132,12 @@ function send(object, callback = null) {
 	}
 
 	// Object example:
-	// interface[module_name].socket.send({
+	// intf[module_name].socket.send({
 	// 	id   : 0x4F8,
 	// 	data : Buffer.from([0x00, 0x42, 0xFE, 0x01, 0xFF, 0xFF, 0xFF, 0xFF]),
 	// });
 
-	interface[module_name].socket.send(object.id, object.data);
+	intf[module_name].socket.send(object.id, object.data);
 
 	if (typeof callback === 'function') callback();
 	return true;

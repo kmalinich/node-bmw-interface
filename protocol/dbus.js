@@ -11,7 +11,7 @@ function validate_module(type, id) {
 	};
 
 	// Convert hex ID to name
-	const name = bus_modules.h2n(id).toUpperCase();
+	const name = bus.modules.h2n(id).toUpperCase();
 
 	// Check if the name is in the array of invalids
 	if (invalid[type].indexOf(name) >= 0) {
@@ -58,14 +58,14 @@ function validate(msg) {
 
 // Clear all queues, reset current error count, display message
 function clear_all(message, callback = null) {
-	status.interface[module_name].errors.resets++;
+	status.intf[module_name].errors.resets++;
 
 	log.msg({
 		src : module_name,
-		msg : protocol[module_name].queue_input.length+' '+message+' - resets: '+status.interface[module_name].errors.resets+', errors: '+status.interface[module_name].errors.current,
+		msg : protocol[module_name].queue_input.length+' '+message+' - resets: '+status.intf[module_name].errors.resets+', errors: '+status.intf[module_name].errors.current,
 	});
 
-	status.interface[module_name].errors.current = 0;
+	status.intf[module_name].errors.current = 0;
 
 	protocol[module_name].queue_input = [];
 
@@ -75,8 +75,8 @@ function clear_all(message, callback = null) {
 
 // Reset error counters, display message if changed
 function error_reset(callback = null) {
-	if (status.interface[module_name].errors.current !== 0) {
-		status.interface[module_name].errors.current = 0;
+	if (status.intf[module_name].errors.current !== 0) {
+		status.intf[module_name].errors.current = 0;
 
 		log.msg({
 			src : module_name,
@@ -90,12 +90,12 @@ function error_reset(callback = null) {
 
 // Increment error counters, display message
 function error_increment(message, callback = null) {
-	status.interface[module_name].errors.current++;
-	status.interface[module_name].errors.total++;
+	status.intf[module_name].errors.current++;
+	status.intf[module_name].errors.total++;
 
 	log.msg({
 		src : module_name,
-		msg : message+' - new error count: '+status.interface[module_name].errors.current,
+		msg : message+' - new error count: '+status.intf[module_name].errors.current,
 	});
 
 	if (typeof callback === 'function') callback();
@@ -111,7 +111,7 @@ function check_queue_input() {
 	}
 
 	// Check error counter, if it's been too high, clear input queue
-	if (status.interface[module_name].errors.current >= protocol.config.error_max) {
+	if (status.intf[module_name].errors.current >= protocol.config.error_max) {
 		protocol[module_name].parsing = false;
 		clear_all('Too many errors');
 		return false;
@@ -203,7 +203,7 @@ function process() {
 		},
 		dst : {
 			id   : queue_process[0],
-			name : bus_modules.h2n(queue_process[0]),
+			name : bus.modules.h2n(queue_process[0]),
 		},
 		len_full : queue_process[1]+protocol[module_name].len_offset, // IBUS/KBUS length calculation is different
 		valid    : {},
@@ -279,18 +279,18 @@ function process() {
 	// Time for a little DBUS trickery...
 	//
 	// If the incoming packet matches our last sent packet:
-	// msg.src.name : DIA, msg.dst.name : bus_modules.h2n(queue_process[0])
+	// msg.src.name : DIA, msg.dst.name : bus.modules.h2n(queue_process[0])
 	//
 	// If the incoming packet does NOT match our last sent packet, it might be a reply..
 	// To help detect, we know:
 	// msg.msg[0] = 0x0B : Get IO status         (msg.src.name is DIA)
 	// msg.msg[0] = 0x0C : Set IO status         (msg.src.name is DIA)
-	// msg.msg[0] = 0xA0 : Diag command ACK      (msg.src.name is bus_modules.h2n(queue_process[0]))
-	// msg.msg[0] = 0xA2 : Diag command rejected (msg.src.name is bus_modules.h2n(queue_process[0]))
-	// msg.msg[0] = 0xFF : Diag command not ACK  (msg.src.name is bus_modules.h2n(queue_process[0]))
+	// msg.msg[0] = 0xA0 : Diag command ACK      (msg.src.name is bus.modules.h2n(queue_process[0]))
+	// msg.msg[0] = 0xA2 : Diag command rejected (msg.src.name is bus.modules.h2n(queue_process[0]))
+	// msg.msg[0] = 0xFF : Diag command not ACK  (msg.src.name is bus.modules.h2n(queue_process[0]))
 	//
 	// If it is a reply:
-	// msg.src.name : bus_modules.h2n(queue_process[0]), msg.dst.name : DIA
+	// msg.src.name : bus.modules.h2n(queue_process[0]), msg.dst.name : DIA
 
 	switch (msg.msg[0]) {
 		case 0xA0:
@@ -345,7 +345,7 @@ function create(msg) {
 	let buffer = Buffer.alloc((msg.msg.length+protocol[module_name].buffer_offset));
 
 	// Convert module names to hex codes
-	buffer[0] = bus_modules.n2h(msg.dst);
+	buffer[0] = bus.modules.n2h(msg.dst);
 	buffer[1] = msg.msg.length+3;
 
 	// Assemble message
