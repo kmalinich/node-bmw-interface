@@ -1,7 +1,5 @@
 /* eslint no-global-assign: "off", no-console: "off" */
 
-const module_name = __filename.slice(__dirname.length + 1, -3);
-
 app_path = __dirname;
 app_name = 'bmwi';
 app_intf = process.argv[2] || process.env.BMWI_INTERFACE || null;
@@ -33,21 +31,21 @@ bus = {
 function term_config(pass) {
 	process.on('SIGTERM', () => {
 		console.log('');
-		log.msg({ src : module_name, msg : 'Caught SIGTERM' });
+		log.msg({ msg : 'Caught SIGTERM' });
 		term();
 	});
 
 	process.on('SIGINT', () => {
 		console.log('');
-		log.msg({ src : module_name, msg : 'Caught SIGINT' });
+		log.msg({ msg : 'Caught SIGINT' });
 		term();
 	});
 
 	process.on('exit', () => {
-		log.msg({ src : module_name, msg : 'Terminated' });
+		log.msg({ msg : 'Terminated' });
 	});
 
-	pass();
+	process.nextTick(pass);
 }
 
 // Render serialport options object
@@ -87,7 +85,7 @@ function serial_options(parity, collision_detection) {
 
 // Function to load modules that require data from config object,
 // AFTER the config object is loaded
-function load_modules(load_modules_callback = null) {
+function load_modules(pass) {
 	// Vehicle data bus protocol config
 	protocol = {
 		config : {
@@ -127,69 +125,51 @@ function load_modules(load_modules_callback = null) {
 	// Host data object (CPU, memory, etc.)
 	host_data = require('host-data');
 
-	if (typeof load_modules_callback === 'function') { load_modules_callback(); }
+	log.module({ msg : 'Loaded modules' });
+
+	process.nextTick(pass);
 	load_modules_callback = undefined;
 }
 
 
 // Global init
-function init(init_callback = null) {
-	log.msg({
-		src : module_name,
-		msg : 'Initializing',
-	});
+function init() {
+	log.msg({ msg : 'Initializing' });
 
 	json.read(() => { // Read JSON config and status files
 		json.reset(() => { // Reset status vars pertinent to launching app
 			load_modules(() => { // Load IBUS module node modules
-				host_data.init(() => { // Initialize host data object
-					socket.init(() => { // Open zeroMQ server
-
+				socket.init(() => { // Open zeroMQ server
+					host_data.init(() => { // Initialize host data object
 						intf[app_intf].init(() => { // Open defined interface
+							log.msg({ msg : 'Initialized' });
+						}, term);
+					}, term);
+				}, term);
+			}, term);
+		}, term);
+	}, term);
+}
 
-							if (typeof init_callback === 'function') { init_callback(); }
-							init_callback = undefined;
 
-							log.msg({ src : module_name, msg : 'Initialized' });
-
-						});
-					});
-				});
-			});
-		});
+// Save-N-Exit
+function bail() {
+	json.write(() => { // Write JSON config and status files
+		process.exit();
 	});
 }
 
 // Global term
-function term(term_callback = null) {
-	log.msg({
-		src : module_name,
-		msg : 'Stopping',
-	});
+function term() {
+	log.msg({ msg : 'Terminating' });
 
-	intf.kbus.term(() => { // Close KBUS serial port
-		intf.lcd.term(() => { // Close USB LCD serial port
-			intf.ibus.term(() => { // Close IBUS serial port
-				intf.dbus.term(() => { // Close IBUS serial port
-					socket.term(() => { // Close zeroMQ server
-						host_data.term(() => { // Terminate host data timeout
-							json.reset(() => { // Reset status vars pertinent to launching app
-								json.write(() => { // Write JSON config and status files
-
-									if (typeof term_callback === 'function') { term_callback(); }
-									term_callback = undefined;
-
-									log.msg({ src : module_name, msg : 'Terminated' });
-									process.exit();
-
-								});
-							});
-						});
-					});
-				});
-			});
-		});
-	});
+	intf[app_intf].term(() => { // Close defined interface
+		host_data.term(() => { // Terminate host data timeout
+			socket.term(() => { // Close zeroMQ server
+				json.reset(bail); // Reset status vars pertinent to launching app
+			}, term);
+		}, term);
+	}, term);
 }
 
 
