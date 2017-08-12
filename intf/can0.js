@@ -1,5 +1,5 @@
 const module_name = __filename.slice(__dirname.length + 1, -3);
-const status_path = 'status.intf.'+module_name+'.';
+// const status_path = 'intf.'+module_name+'.';
 
 
 // Check if we're configured to use this bus, set status var, and return
@@ -9,26 +9,6 @@ function check_config(callback = null) {
 		if (typeof callback === 'function') callback();
 		callback = undefined;
 		return update_status(false);
-	}
-
-	if (typeof callback === 'function') callback();
-	callback = undefined;
-	return true;
-}
-
-
-// Check if the interface has been initialized yet
-function check_configured(callback = null) {
-	if (!check_config()) {
-		if (typeof callback === 'function') callback();
-		callback = undefined;
-		return update_configured(false);
-	}
-
-	if (status.intf[module_name].configured === false) {
-		if (typeof callback === 'function') callback();
-		callback = undefined;
-		return update_configured(false);
 	}
 
 	if (typeof callback === 'function') callback();

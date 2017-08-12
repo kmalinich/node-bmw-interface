@@ -1,5 +1,5 @@
 const module_name = __filename.slice(__dirname.length + 1, -3);
-const status_path = 'status.intf.'+module_name+'.';
+const status_path = 'intf.'+module_name+'.';
 
 // const align      = require('multipad');
 const serialport = require('serialport');
@@ -24,7 +24,7 @@ function check_config(callback = null) {
 	if (config.intf[module_name] === null) {
 		update.status(status_path+'configured', false);
 		if (typeof callback === 'function') callback();
-		return update.status(status_path+'up', false);
+		return false;
 	}
 
 	if (typeof callback === 'function') callback();

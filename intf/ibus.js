@@ -1,6 +1,11 @@
+/* eslint no-console: 0 */
+
 const module_name = __filename.slice(__dirname.length + 1, -3);
 const serialport  = require('serialport');
-const status_path = 'status.intf.'+module_name+'.';
+
+const status_path = 'intf.'+module_name+'.';
+const status_conf = status_path+'configured';
+const status_up   = status_path+'up';
 
 
 // Output formatted error message
@@ -15,43 +20,20 @@ function error_out(message, error, callback = null) {
 
 
 // Check if we're configured to use this bus, set status var, and return
-function check_config(callback = null) {
+function check_config() {
 	if (config.intf[module_name] === null) {
-		update.status(status_path+'configured', false);
-		if (typeof callback === 'function') callback();
-		return update.status(status_path+'up', false);
+		update.status(status_conf, false);
+		update.status(status_up, false);
+		return false;
 	}
-
-	if (typeof callback === 'function') callback();
-	return true;
-}
-
-// Check if the serial port has been initialized yet
-function check_configured(callback = null) {
-	if (!check_config()) {
-		if (typeof callback === 'function') callback();
-		return update.status(status_path+'configured', false);
-	}
-
-	if (status.intf[module_name].configured === false) {
-		if (typeof callback === 'function') callback();
-		return update.status(status_path+'configured', false);
-	}
-
-	if (typeof callback === 'function') callback();
 	return true;
 }
 
 // Check if the port is open, set status var, and return
-function check_open(callback = null) {
-	if (!check_configured()) return false;
-	if (typeof callback === 'function') callback();
-
-	if (intf[module_name].serial_port !== null) {
-		return update.status(status_path+'up', intf[module_name].serial_port.isOpen);
-	}
-
-	return update.status(status_path+'up', false);
+function check_open() {
+	console.log('check_open');
+	update.status(status_path+'up', intf[module_name].serial_port.isOpen);
+	return status.intf[module_name].up;
 }
 
 // Setup/configure serial port
@@ -150,18 +132,37 @@ function send(buffer, waiter = false, callback = null) {
 	});
 }
 
+// Set serial port options
+function set_options(callback = null) {
+	intf[module_name].serial_port.set(intf.options[module_name].open, (error) => {
+		if (error) {
+			error_out('setting options', error);
+
+			process.nextTick(callback);
+			return;
+		}
+
+		log.msg({
+			msg : 'Interface options set',
+		});
+
+		process.nextTick(callback);
+		return;
+	});
+}
+
 // Open serial port
 function init(callback = null) {
 	// Don't continue unless configured to use this port
 	if (!configure_port()) {
-		if (typeof callback === 'function') callback();
-		return false;
+		process.nextTick(callback);
+		return;
 	}
 
 	// Check if it's already open
 	if (check_open()) {
-		if (typeof callback === 'function') callback();
-		return false;
+		process.nextTick(callback);
+		return;
 	}
 
 	// Open the port
@@ -171,33 +172,14 @@ function init(callback = null) {
 		if (error) {
 			error_out('opening interface', error);
 
-			if (typeof callback === 'function') callback();
-			return false;
+			process.nextTick(callback);
+			return;
 		}
 
 		set_options(() => {
-			if (typeof callback === 'function') callback();
-			return true;
+			process.nextTick(callback);
+			return;
 		});
-	});
-}
-
-// Set serial port options
-function set_options(callback = null) {
-	intf[module_name].serial_port.set(intf.options[module_name].open, (error) => {
-		if (error) {
-			error_out('setting options', error);
-
-			if (typeof callback === 'function') callback();
-			return false;
-		}
-
-		log.msg({
-			msg : 'Interface options set',
-		});
-
-		if (typeof callback === 'function') callback();
-		return true;
 	});
 }
 
@@ -245,9 +227,10 @@ module.exports = {
 	writing  : 0,
 
 	// Functions
-	check_config : (callback)         => { check_config(callback); },
-	check_open   : (callback)         => { check_open(callback);   },
-	send         : (buffer, callback) => { send(buffer, callback); },
-	term         : (callback)         => { term(callback);         },
-	init         : (callback)         => { init(callback);         },
+	check_config : () => { check_config(); },
+	check_open   : () => { check_open();   },
+
+	send : (buffer, callback) => { send(buffer, callback); },
+	term : (callback)         => { term(callback);         },
+	init : (callback)         => { init(callback);         },
 };
