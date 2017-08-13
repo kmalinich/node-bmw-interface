@@ -8,9 +8,9 @@ var api_socket_key_last = 0;
 var api_socket_map      = {};
 api_server              = http.createServer(api_handler);
 var api_header          = {
-'Content-Type'  : 'application/json',
-'Cache-Control' : 'no-cache',
-}
+	'Content-Type'  : 'application/json',
+	'Cache-Control' : 'no-cache',
+};
 
 // npm libraries
 now = require('performance-now');
@@ -18,7 +18,7 @@ os  = require('os');
 pad = require('pad');
 
 // node-bmw libraries
-bus_modules = require('bus-modules');
+bus.modules = require('bus-modules');
 
 module_name = 'ibus';
 
@@ -71,11 +71,11 @@ function process(buffer_process) {
 		msg : null,
 		src : {
 			id   : buffer_process[0],
-			name : bus_modules.h2n(buffer_process[0]),
+			name : bus.modules.h2n(buffer_process[0]),
 		},
 		dst : {
 			id   : buffer_process[2],
-			name : bus_modules.h2n(buffer_process[2]),
+			name : bus.modules.h2n(buffer_process[2]),
 		},
 	};
 

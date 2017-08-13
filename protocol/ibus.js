@@ -8,7 +8,7 @@ function validate_module(type, id) {
 	};
 
 	// Convert hex ID to name
-	const name = bus_modules.h2n(id).toUpperCase();
+	const name = bus.modules.h2n(id).toUpperCase();
 
 	// Check if the name is in the array of invalids
 	if (invalid[type].indexOf(name) >= 0) {
@@ -57,21 +57,21 @@ function validate(msg) {
 	};
 
 	// Add key for fully valid
-	msg.valid.full = Object.keys(msg.valid).every((k) => { return msg.valid[k] === true });
+	msg.valid.full = Object.keys(msg.valid).every((k) => { return msg.valid[k] === true; });
 
 	return msg;
 }
 
 // Clear all queues, reset current error count, display message
 function clear_all(message, callback = null) {
-	status.interface[module_name].errors.resets++;
+	status.intf[module_name].errors.resets++;
 
 	log.msg({
 		src : module_name,
-		msg : protocol[module_name].queue_input.length+' '+message+' - resets: '+status.interface[module_name].errors.resets+', errors: '+status.interface[module_name].errors.current,
+		msg : protocol[module_name].queue_input.length+' '+message+' - resets: '+status.intf[module_name].errors.resets+', errors: '+status.intf[module_name].errors.current,
 	});
 
-	status.interface[module_name].errors.current = 0;
+	status.intf[module_name].errors.current = 0;
 
 	protocol[module_name].queue_input = [];
 
@@ -81,8 +81,8 @@ function clear_all(message, callback = null) {
 
 // Reset error counters, display message if changed
 function error_reset(callback = null) {
-	if (status.interface[module_name].errors.current !== 0) {
-		status.interface[module_name].errors.current = 0;
+	if (status.intf[module_name].errors.current !== 0) {
+		status.intf[module_name].errors.current = 0;
 
 		log.msg({
 			src : module_name,
@@ -96,12 +96,12 @@ function error_reset(callback = null) {
 
 // Increment error counters, display message
 function error_increment(message, callback = null) {
-	status.interface[module_name].errors.current++;
-	status.interface[module_name].errors.total++;
+	status.intf[module_name].errors.current++;
+	status.intf[module_name].errors.total++;
 
 	log.msg({
 		src : module_name,
-		msg : message+' - new error count: '+status.interface[module_name].errors.current,
+		msg : message+' - new error count: '+status.intf[module_name].errors.current,
 	});
 
 	if (typeof callback === 'function') callback();
@@ -117,11 +117,11 @@ function check_queue_input() {
 	}
 
 	// Check error counter, if it's been too high, clear input queue
-	if (status.interface[module_name].errors.current >= protocol.config.error_max) {
+	if (status.intf[module_name].errors.current >= protocol.config.error_max) {
 		protocol[module_name].parsing = false;
 		clear_all('Too many errors');
 		return false;
-	};
+	}
 
 	// Check if the input queue is too long (buffer overflow/parse error)
 	if (protocol[module_name].queue_input.length >= protocol.config.length_max) {
@@ -159,11 +159,11 @@ function parser() {
 	protocol[module_name].queue_input = protocol[module_name].queue_input.slice(process_return.slice);
 
 	if (process_return.failed === false) {
-		status.interface[module_name].messages++;
-		if (status.interface[module_name].messages % 100 === 0) {
+		status.intf[module_name].messages++;
+		if (status.intf[module_name].messages % 100 === 0) {
 			log.msg({
 				src : module_name,
-				msg : 'Message count: '+status.interface[module_name].messages,
+				msg : 'Message count: '+status.intf[module_name].messages,
 			});
 		}
 	}
@@ -215,11 +215,11 @@ function process() {
 		msg : null,
 		src : {
 			id   : queue_process[0],
-			name : bus_modules.h2n(queue_process[0]),
+			name : bus.modules.h2n(queue_process[0]),
 		},
 		dst : {
 			id   : queue_process[2],
-			name : bus_modules.h2n(queue_process[2]),
+			name : bus.modules.h2n(queue_process[2]),
 		},
 		len_full : queue_process[1]+protocol[module_name].len_offset, // IBUS/KBUS length calculation is different
 		valid    : {},
@@ -327,15 +327,15 @@ function create(msg) {
 	switch (module_name) {
 		case 'dbus':
 			// Convert module names to hex codes
-			buffer[0] = bus_modules.n2h(msg.dst);
+			buffer[0] = bus.modules.n2h(msg.dst);
 			buffer[1] = msg.msg.length+3;
 			break;
 
 		default:
 			// Convert module names to hex codes
-			buffer[0] = bus_modules.n2h(msg.src);
+			buffer[0] = bus.modules.n2h(msg.src);
 			buffer[1] = msg.msg.length+2;
-			buffer[2] = bus_modules.n2h(msg.dst);
+			buffer[2] = bus.modules.n2h(msg.dst);
 	}
 
 	// Assemble message

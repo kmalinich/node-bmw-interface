@@ -1,12 +1,13 @@
 const module_name = __filename.slice(__dirname.length + 1, -3);
+const status_path = 'intf.'+module_name+'.';
 
-const align      = require('multipad');
+// const align      = require('multipad');
 const serialport = require('serialport');
 
 
 // Output formatted error message
 function error_out(message, error, callback = null) {
-	var error_fmt = error.toString().replace(/Error:\ /, '').replace(/Error:\ /, '').trim();
+	let error_fmt = error.toString().replace(/Error: /, '').replace(/Error: /, '').trim();
 
 	log.msg({
 		src : module_name,
@@ -20,10 +21,10 @@ function error_out(message, error, callback = null) {
 
 // Check if we're configured to use this bus, set status var, and return
 function check_config(callback = null) {
-	if (config.interface[module_name] === null) {
-		update_configured(false);
+	if (config.intf[module_name] === null) {
+		update.status(status_path+'configured', false);
 		if (typeof callback === 'function') callback();
-		return update_status(false);
+		return false;
 	}
 
 	if (typeof callback === 'function') callback();
@@ -34,12 +35,12 @@ function check_config(callback = null) {
 function check_configured(callback = null) {
 	if (!check_config()) {
 		if (typeof callback === 'function') callback();
-		return update_configured(false);
+		return update.status(status_path+'configured', false);
 	}
 
-	if (status.interface[module_name].configured === false) {
+	if (status.intf[module_name].configured === false) {
 		if (typeof callback === 'function') callback();
-		return update_configured(false);
+		return update.status(status_path+'configured', false);
 	}
 
 	if (typeof callback === 'function') callback();
@@ -50,60 +51,13 @@ function check_configured(callback = null) {
 function check_open(callback = null) {
 	if (!check_configured()) return false;
 	if (typeof callback === 'function') callback();
-	if (interface[module_name].serial_port !== null) {
-		return update_status(interface[module_name].serial_port.isOpen);
-	}
-	return update_status(false);
-}
 
-
-// Check if the interface configured is changed before setting,
-// if changed, show message
-function update_configured(new_configured, callback = null) {
-	if (status.interface[module_name].configured !== new_configured) {
-		if (interface.config.debug === true) {
-			log.change({
-				src   : module_name,
-				value : 'Interface configured',
-				old   : status.interface[module_name].configured,
-				new   : new_configured,
-			});
-		}
-
-		// Update status var
-		status.interface[module_name].configured = new_configured;
+	if (intf[module_name].serial_port !== null) {
+		return update.status(status_path+'up', intf[module_name].serial_port.isOpen);
 	}
 
-	if (typeof callback === 'function') callback();
-	return status.interface[module_name].configured;
+	return update.status(status_path+'up', false);
 }
-
-// Check if the interface status is changed before setting,
-// if changed, show message
-function update_status(new_status, callback = null) {
-	if (status.interface[module_name].up !== new_status) {
-		log.change({
-			src   : module_name,
-			value : 'Interface open',
-			old   : status.interface[module_name].up,
-			new   : new_status,
-		});
-
-		// Update status var
-		status.interface[module_name].up = new_status;
-
-		if (status.interface[module_name].up === false) {
-			log.msg({
-				src : module_name,
-				msg : 'Port closed',
-			});
-		}
-	}
-
-	if (typeof callback === 'function') callback();
-	return status.interface[module_name].up;
-}
-
 
 // Setup/configure serial port
 function configure_port(callback = null) {
@@ -112,24 +66,24 @@ function configure_port(callback = null) {
 		return false;
 	}
 
-	let intf_path = config.interface[module_name];
-	let intf_opts = interface.options[module_name].init;
-	interface[module_name].serial_port = new serialport(intf_path, intf_opts);
+	let intf_path = config.intf[module_name];
+	let intf_opts = intf.options[module_name].init;
+	intf[module_name].serial_port = new serialport(intf_path, intf_opts);
 
 	// Events
-	interface[module_name].serial_port.on('error', (error) => {
+	intf[module_name].serial_port.on('error', (error) => {
 		// On port error
 		check_open();
 		error_out('in port', error);
 	});
 
-	interface[module_name].serial_port.on('close', () => {
+	intf[module_name].serial_port.on('close', () => {
 		// On port close
 		check_open();
 	});
 
 	// Set init status var
-	update_configured(true);
+	update.status(status_path+'configured', true);
 
 	if (typeof callback === 'function') callback();
 	return true;
@@ -152,8 +106,8 @@ function send(buffer, waiter = false, callback = null) {
 	// Convert input to Buffer
 	buffer = Buffer.from(buffer);
 
-	if (interface[module_name].draining+interface[module_name].writing != 0) {
-		if (waiter === false) { interface[module_name].waiting++; }
+	if (intf[module_name].draining+intf[module_name].writing != 0) {
+		if (waiter === false) { intf[module_name].waiting++; }
 
 		setImmediate(() => {
 			send(buffer, true, callback);
@@ -161,23 +115,23 @@ function send(buffer, waiter = false, callback = null) {
 		return;
 	}
 
-	if (waiter === true) { interface[module_name].waiting--; }
+	if (waiter === true) { intf[module_name].waiting--; }
 
-	interface[module_name].writing++;
-	interface[module_name].serial_port.write(buffer, (error) => {
-		interface[module_name].writing--;
+	intf[module_name].writing++;
+	intf[module_name].serial_port.write(buffer, (error) => {
+		intf[module_name].writing--;
 
 		if (error) error_out('writing', error);
 
-		if (interface[module_name].draining+interface[module_name].writing === 0) {
-			interface[module_name].draining++;
+		if (intf[module_name].draining+intf[module_name].writing === 0) {
+			intf[module_name].draining++;
 
-			interface[module_name].serial_port.drain((error) => {
-				interface[module_name].draining--;
+			intf[module_name].serial_port.drain((error) => {
+				intf[module_name].draining--;
 
 				if (error) error_out('draining', error);
 
-				if (interface.config.debug === true) {
+				if (intf.config.debug === true) {
 					log.msg({
 						src : module_name,
 						msg : 'Drain success '+buffer,
@@ -233,30 +187,28 @@ function command(cmd, value = null, callback = null) {
 	cmd.unshift(0xFE);
 
 	// Send command
-	interface[module_name].send(cmd, false, callback);
+	intf[module_name].send(cmd, false, callback);
 }
 
 // Separate set-color function for LCD since it has more input
 function color(values) {
 	if (!check_config()) {
-		if (typeof callback === 'function') callback();
 		return false;
 	}
 
 	// Only write data if port is open
 	if (!check_open()) {
 		log.msg({ src : module_name, msg : 'Waiting for port to open' });
-		if (typeof callback === 'function') callback();
 		return false;
 	}
 
-	let command = [0xD0, values.r, values.g, values.b];
+	let cmd = [0xD0, values.r, values.g, values.b];
 
 	// Add 0xFE (cmd code) at beginning of array
 	cmd.unshift(0xFE);
 
 	// Send command
-	interface[module_name].send(cmd, false, callback);
+	intf[module_name].send(cmd, false);
 }
 
 function text(data, callback = null) {
@@ -296,36 +248,37 @@ function text(data, callback = null) {
 	// data.upper = align.center(data.upper.substring(0, 16), 16, ' ');
 	// data.lower = align.center(data.lower.substring(0, 16), 16, ' ');
 
+	let string;
 	string = data.upper+data.lower;
 
-	interface[module_name].command('clear', null, () => {
-	interface[module_name].command('home', null, () => {
-		interface[module_name].send(string, null, () => {
-			if (typeof callback === 'function') callback();
-			return true;
+	intf[module_name].command('clear', null, () => {
+		intf[module_name].command('home', null, () => {
+			intf[module_name].send(string, null, () => {
+				if (typeof callback === 'function') callback();
+				return true;
+			});
 		});
-	});
 	});
 }
 
 // Configure LCD settings
 function set_options(callback = null) {
-	interface[module_name].command('on', null, () => {
-		interface[module_name].command('brightness', 0xFF, () => {
-			interface[module_name].command('contrast', 0xB0, () => {
-				interface[module_name].command('autoscroll-off', null, () => {
-					interface[module_name].command('home', null, () => {
-						interface[module_name].command('clear', null, () => {
+	intf[module_name].command('on', null, () => {
+		intf[module_name].command('brightness', 0xFF, () => {
+			intf[module_name].command('contrast', 0xB0, () => {
+				intf[module_name].command('autoscroll-off', null, () => {
+					intf[module_name].command('home', null, () => {
+						intf[module_name].command('clear', null, () => {
 
-							interface.lcd.text({
+							intf.lcd.text({
 								upper : 'bmwi@lcd',
 								lower : 'initialized',
 							});
 
 							// Turn the LCD back off after a few seconds
 							// setTimeout(() => {
-							// 	interface[module_name].command('clear', null, () => {
-							// 		interface[module_name].command('off', null, () => {
+							// 	intf[module_name].command('clear', null, () => {
+							// 		intf[module_name].command('off', null, () => {
 							// 		});
 							// 	});
 							// }, 10000);
@@ -360,7 +313,7 @@ function init(callback = null) {
 	}
 
 	// Open the port
-	interface[module_name].serial_port.open((error) => {
+	intf[module_name].serial_port.open((error) => {
 		check_open();
 
 		if (error) {
@@ -390,13 +343,15 @@ function term(callback = null) {
 		return false;
 	}
 
-	interface[module_name].command('clear', null, () => {
-		interface[module_name].command('off', null, () => {
+	intf[module_name].command('clear', null, () => {
+		intf[module_name].command('off', null, () => {
 
 			// Drain the port
-			interface[module_name].serial_port.drain((error) => {
+			intf[module_name].serial_port.drain((error) => {
+				if (error) error_out('draining', error);
+
 				// Close the port
-				interface[module_name].serial_port.close((error) => {
+				intf[module_name].serial_port.close((error) => {
 					check_open();
 
 					if (error) {
