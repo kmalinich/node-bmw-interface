@@ -128,7 +128,6 @@ function load_modules(pass) {
 	log.module({ msg : 'Loaded modules' });
 
 	process.nextTick(pass);
-	load_modules_callback = undefined;
 }
 
 
