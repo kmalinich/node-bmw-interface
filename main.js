@@ -2,7 +2,7 @@
 
 app_path = __dirname;
 app_name = 'bmwi';
-app_intf = process.argv[2] || process.env.BMWI_INTERFACE || null;
+app_intf = process.argv[2] || process.env.BMWI_INTERFACE || 'ibus';
 app_type = app_intf;
 
 process.title = app_name+'@'+app_type;
@@ -176,7 +176,7 @@ function term() {
 				json.reset(bail); // Reset status vars pertinent to launching app
 			}, term);
 		}, term);
-	}, term);
+	}, bail);
 }
 
 
