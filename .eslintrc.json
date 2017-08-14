@@ -4,33 +4,33 @@
 		"node": true
 	},
 	"extends": "eslint:recommended",
+	"globals": {
+		"app_intf": false,
+		"app_name": false,
+		"app_path": false,
+		"app_type": false,
+		"bitmask": false,
+		"bus": false,
+		"config": false,
+		"gpio": false,
+		"hex": false,
+		"host_data": false,
+		"intf": false,
+		"json": false,
+		"kodi": false,
+		"log": false,
+		"notify": false,
+		"now": false,
+		"obc_values": false,
+		"os": false,
+		"pad": false,
+		"protocol": false,
+		"socket": false,
+		"status": false,
+		"update": false
+	},
 	"parserOptions": {
 		"sourceType": "module"
-	},
-	"globals": {
-		"app_intf" : false,
-		"app_name" : false,
-		"app_path" : false,
-		"app_type" : false,
-		"bitmask" : false,
-		"bus" : false,
-		"config" : false,
-		"gpio" : false,
-		"hex" : false,
-		"host_data" : false,
-		"intf": false,
-		"json" : false,
-		"kodi" : false,
-		"log" : false,
-		"notify" : false,
-		"now" : false,
-		"obc_values" : false,
-		"os" : false,
-		"pad" : false,
-		"protocol" : false,
-		"socket" : false,
-		"status" : false,
-		"update" : false
 	},
 	"rules": {
 		"indent": [
@@ -44,6 +44,12 @@
 			"error",
 			"unix"
 		],
+		"no-unused-vars": [
+			"error",
+			{
+				"varsIgnorePattern": "module_name"
+			}
+		],
 		"quotes": [
 			"error",
 			"single"
@@ -51,12 +57,6 @@
 		"semi": [
 			"error",
 			"always"
-		],
-		"no-unused-vars": [
-			"error",
-			{
-				"varsIgnorePattern": "module_name"
-			}
 		]
 	}
 }

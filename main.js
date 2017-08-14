@@ -14,17 +14,12 @@ pad = require('pad');
 
 // node-bmw libraries
 bitmask = require('bitmask');
+bus     = require('bus');
 hex     = require('hex');
 json    = require('json');
 log     = require('log-output');
 socket  = require('socket');
 update  = require('update');
-
-bus = {
-	arbids  : require('bus-arbids'),  // CANBUS ARBIDs
-	data    : require('bus-data'),    // Data sender/router (based on dst)
-	modules : require('bus-modules'), // DBUS/IBUS/KBUS module IDs
-};
 
 
 // Configure term event listeners
@@ -142,11 +137,11 @@ function init() {
 		json.reset(() => { // Reset status vars pertinent to launching app
 			load_modules(() => { // Load IBUS module node modules
 				socket.init(() => { // Open zeroMQ server
-					// host_data.init(() => { // Initialize host data object
-						// intf[app_intf].init(() => { // Open defined interface
+					host_data.init(() => { // Initialize host data object
+						intf[app_intf].init(() => { // Open defined interface
 							log.msg({ msg : 'Initialized' });
-						// }, term);
-					// }, term);
+						}, term);
+					}, term);
 				}, term);
 			}, term);
 		}, term);
