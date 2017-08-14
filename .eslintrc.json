@@ -24,7 +24,7 @@
 		"obc_values": false,
 		"os": false,
 		"pad": false,
-		"protocol": false,
+		"proto": false,
 		"socket": false,
 		"status": false,
 		"update": false
