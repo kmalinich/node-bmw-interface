@@ -44,7 +44,7 @@ function term_config(pass) {
 }
 
 // Render serialport options object
-function serial_options(parity, collision_detection) {
+function serial_opts(parity, collision_detection) {
 	// DBUS+IBUS+KBUS :  9600 8e1
 	// USB serial LCD : 57600 8n1
 
@@ -61,14 +61,6 @@ function serial_options(parity, collision_detection) {
 			baudRate : baud_rate,
 			parity   : parity,
 			rtscts   : collision_detection,
-		},
-		open_new : {
-			cts  : collision_detection,
-			dsr  : collision_detection,
-			rts  : false,
-			xon  : false,
-			xoff : false,
-			xany : false,
 		},
 		open : {
 			cts  : collision_detection,
@@ -89,36 +81,53 @@ function load_modules(pass) {
 		config : {
 			debug : process.env.BMWD_DEBUG_INTERFACE || false,
 		},
-		options : {
-			dbus : serial_options('even', false),
-			ibus : serial_options('even',  true),
-			kbus : serial_options('even',  true),
-			lcd  : serial_options('none', false),
-		},
+		intf : null,
+		opts : {},
+		path : config.intf[app_intf],
+		pari : 'even',
+		coll : false,
+		type : null,
 	};
 
 	// Vehicle data bus protocol config
-	protocol = {
+	proto = {
 		config : {
 			debug      : process.env.BMWD_DEBUG_PROTOCOL || false,
 			length_min : 5,
 			length_max : 1000,
 			error_max  : 50,
 		},
+		proto : null,
 	};
 
-	// Load separately as they depend on config values above
-	protocol.dbus = require('./protocol/dbus');
-	protocol.ibus = require('./protocol/ibus');
-	protocol.kbus = require('./protocol/kbus');
+	// Load vehicle interface and protocol libs
+	switch (app_intf) {
+		case 'can0' :
+		case 'can1' :
+			intf.type = 'can';
+			break;
 
-	// Vehicle interface libs
-	intf.can0 = require('./intf/can0');
-	intf.can1 = require('./intf/can1');
-	intf.dbus = require('./intf/dbus');
-	intf.ibus = require('./intf/ibus');
-	intf.kbus = require('./intf/kbus');
-	intf.lcd  = require('./intf/lcd');
+		case 'dbus' :
+			intf.type = 'bmw';
+			break;
+
+		case 'ibus' :
+		case 'kbus' :
+			intf.coll = true;
+			intf.type = 'bmw';
+			break;
+
+		case 'lcd' :
+			intf.pari = 'none';
+			intf.type = 'lcd';
+			break;
+	}
+
+	// Populate interface, options, and protocol
+	// using above rendered variables
+	intf.intf   = require('intf-'+intf.type);
+	intf.opts   = serial_opts(intf.pari, intf.coll);
+	proto.proto = require('proto-'+intf.type);
 
 	// Host data object (CPU, memory, etc.)
 	host_data = require('host-data');
@@ -136,14 +145,14 @@ function init() {
 	json.read(() => { // Read JSON config and status files
 		json.reset(() => { // Reset status vars pertinent to launching app
 			load_modules(() => { // Load IBUS module node modules
-				socket.init(() => { // Open zeroMQ server
-					host_data.init(() => { // Initialize host data object
-						intf[app_intf].init(() => { // Open defined interface
+				intf.intf.init(() => { // Open defined interface
+					socket.init(() => { // Open zeroMQ server
+						host_data.init(() => { // Initialize host data object
 							log.msg({ msg : 'Initialized' });
 						}, term);
 					}, term);
 				}, term);
-			}, term);
+			},	term);
 		}, term);
 	}, term);
 }
@@ -160,7 +169,7 @@ function bail() {
 function term() {
 	log.msg({ msg : 'Terminating' });
 
-	intf[app_intf].term(() => { // Close defined interface
+	intf.intf.term(() => { // Close defined interface
 		host_data.term(() => { // Terminate host data timeout
 			socket.term(() => { // Close zeroMQ server
 				json.reset(bail); // Reset status vars pertinent to launching app
