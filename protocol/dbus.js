@@ -41,21 +41,6 @@ function validate_crc(msg) {
 	return calc_crc === msg.crc;
 }
 
-// Validate src, dst, and crc and attach it to msg.valid
-function validate(msg) {
-	// Add object for individual validations
-	msg.valid = {
-		src : true,
-		dst : validate_module('dst', msg.dst.name),
-		crc : validate_crc(msg),
-	};
-
-	// Add key for fully valid
-	msg.valid.full = Object.keys(msg.valid).every((k) => { return msg.valid[k] === true; });
-
-	return msg;
-}
-
 // Clear all queues, reset current error count, display message
 function clear_all(message, callback = null) {
 	status.intf[module_name].errors.resets++;
