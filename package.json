@@ -1,23 +1,5 @@
 {
-	"name": "node-bmw-interface",
-	"version": "0.0.1",
-	"description": "NodeJS-powered BMW IBUS interface client",
-	"main": "launch.sh",
-	"devDependencies": {},
 	"author": "kdm <kennygprs@gmail.com>",
-	"license": "MIT",
-	"homepage": "https://github.com/kmalinich/node-bmw-interface#readme",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/kmalinich/node-bmw-interface.git"
-	},
-	"keywords": [
-		"bmw",
-		"canbus",
-		"dbus",
-		"ibus",
-		"kbus"
-	],
 	"bugs": {
 		"url": "https://github.com/kmalinich/node-bmw-interface/issues"
 	},
@@ -35,9 +17,27 @@
 		"trucolor": "^0.6.6",
 		"zeromq": "^4.5.0"
 	},
+	"description": "NodeJS-powered BMW IBUS interface client",
+	"devDependencies": {},
+	"homepage": "https://github.com/kmalinich/node-bmw-interface#readme",
+	"keywords": [
+		"bmw",
+		"canbus",
+		"dbus",
+		"ibus",
+		"kbus"
+	],
+	"license": "MIT",
+	"main": "launch.sh",
+	"name": "node-bmw-interface",
 	"optionalDependencies": {
-		"rawcan": "^1.1.4",
 		"pi-temperature": "^2.0.0",
+		"rawcan": "^1.1.4",
 		"smc": "^2.0.0"
-	}
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/kmalinich/node-bmw-interface.git"
+	},
+	"version": "0.0.1"
 }
