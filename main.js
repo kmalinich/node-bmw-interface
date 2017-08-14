@@ -127,7 +127,8 @@ function load_modules(pass) {
 	// using above rendered variables
 	intf.intf   = require('intf-'+intf.type);
 	intf.opts   = serial_opts(intf.pari, intf.coll);
-	proto.proto = require('proto-'+intf.type);
+	if (intf.type !== 'can')
+		proto.proto = require('proto-'+intf.type);
 
 	// Host data object (CPU, memory, etc.)
 	host_data = require('host-data');
