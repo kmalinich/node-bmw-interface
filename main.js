@@ -21,6 +21,9 @@ log     = require('log-output');
 socket  = require('socket');
 update  = require('update');
 
+const express = require('express');
+const app = express();
+
 
 // Configure term event listeners
 function term_config(pass) {
@@ -150,6 +153,19 @@ function init() {
 					socket.init(() => { // Open zeroMQ server
 						host_data.init(() => { // Initialize host data object
 							log.msg({ msg : 'Initialized' });
+
+							app.get('/config', (req, res) => {
+								res.send(JSON.stringify(config));
+							});
+
+							app.get('/status', (req, res) => {
+								res.send(JSON.stringify(status));
+							});
+
+							app.listen(3001, () => {
+								log.msg({ msg : 'Express listening on port 3001' });
+							});
+
 						}, term);
 					}, term);
 				}, term);
