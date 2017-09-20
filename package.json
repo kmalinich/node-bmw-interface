@@ -8,7 +8,7 @@
 		"callers-path": "^1.0.5",
 		"chump": "^1.2.0",
 		"defaults-deep": "^0.2.3",
-		"jsonfile": "^3.0.1",
+		"jsonfile": "^4.0.0",
 		"multipad": "^1.1.1",
 		"object-path": "^0.11.4",
 		"pad": "^1.1.0",
