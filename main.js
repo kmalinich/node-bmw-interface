@@ -5,7 +5,7 @@ app_name = 'bmwi';
 app_intf = process.argv[2] || process.env.BMWI_INTERFACE || 'ibus';
 app_type = app_intf;
 
-process.title = app_name+'@'+app_type;
+process.title = app_name + '@' + app_type;
 
 // npm libraries
 now = require('performance-now');
@@ -128,10 +128,10 @@ function load_modules(pass) {
 
 	// Populate interface, options, and protocol
 	// using above rendered variables
-	intf.intf   = require('intf-'+intf.type);
-	intf.opts   = serial_opts(intf.pari, intf.coll);
-	if (intf.type !== 'can')
-		proto.proto = require('proto-'+intf.type);
+	intf.intf = require('intf-' + intf.type);
+	intf.opts = serial_opts(intf.pari, intf.coll);
+
+	if (intf.type !== 'can') { proto.proto = require('proto-' + intf.type); }
 
 	// Host data object (CPU, memory, etc.)
 	host_data = require('host-data');
@@ -169,7 +169,7 @@ function init() {
 						}, term);
 					}, term);
 				}, term);
-			},	term);
+			}, term);
 		}, term);
 	}, term);
 }
