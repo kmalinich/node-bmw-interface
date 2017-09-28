@@ -8,15 +8,15 @@
 		"callers-path": "^1.0.5",
 		"chump": "^1.2.0",
 		"defaults-deep": "^0.2.3",
-		"express": "^4.15.4",
-		"jsonfile": "^3.0.1",
+		"express": "^4.16.0",
+		"jsonfile": "^4.0.0",
 		"multipad": "^1.1.1",
 		"object-path": "^0.11.4",
 		"pad": "^1.1.0",
 		"performance-now": "^2.1.0",
 		"serialport": "^5.0.0",
 		"trucolor": "^0.6.6",
-		"zeromq": "^4.5.0"
+		"zeromq": "^4.6.0"
 	},
 	"description": "NodeJS-powered BMW IBUS interface client",
 	"devDependencies": {},
