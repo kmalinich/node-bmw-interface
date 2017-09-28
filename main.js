@@ -129,7 +129,7 @@ function load_modules(pass) {
 	intf.intf = require('intf-' + intf.type);
 	intf.opts = serial_opts(intf.pari, intf.coll);
 
-	if (intf.type.endsWith('bus')) { proto.proto = require('proto-' + intf.type); }
+	if (intf.type === 'bmw') proto.proto = require('proto-' + intf.type);
 
 	// Host data object (CPU, memory, etc.)
 	host_data = require('host-data');
