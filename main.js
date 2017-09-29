@@ -3,9 +3,8 @@
 app_path = __dirname;
 app_name = 'bmwi';
 app_intf = process.argv[2] || process.env.BMWI_INTERFACE || 'ibus';
-app_type = app_intf;
 
-process.title = app_name + '@' + app_type;
+process.title = app_name + '@' + app_intf;
 
 // npm libraries
 now = require('performance-now');
@@ -13,6 +12,7 @@ os  = require('os');
 pad = require('pad');
 
 // node-bmw libraries
+api     = require('api');
 bitmask = require('bitmask');
 bus     = require('bus');
 hex     = require('hex');
@@ -128,7 +128,7 @@ function load_modules(pass) {
 	intf.intf = require('intf-' + intf.type);
 	intf.opts = serial_opts(intf.pari, intf.coll);
 
-	if (intf.type !== 'can') { proto.proto = require('proto-' + intf.type); }
+	if (intf.type === 'bmw') proto.proto = require('proto-' + intf.type);
 
 	// Host data object (CPU, memory, etc.)
 	host_data = require('host-data');
@@ -149,7 +149,9 @@ function init() {
 				intf.intf.init(() => { // Open defined interface
 					socket.init(() => { // Open zeroMQ server
 						host_data.init(() => { // Initialize host data object
-							log.msg({ msg : 'Initialized' });
+							api.init(() => { // Start Express API server
+								log.msg({ msg : 'Initialized' });
+							}, term);
 						}, term);
 					}, term);
 				}, term);
