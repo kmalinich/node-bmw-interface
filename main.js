@@ -63,12 +63,13 @@ function serial_opts(parity, collision_detection) {
 			rtscts   : collision_detection,
 		},
 		open : {
-			cts  : collision_detection,
-			dsr  : false,
-			rts  : collision_detection,
-			xon  : false,
-			xoff : false,
-			xany : false,
+			cts    : collision_detection,
+			dsr    : false,
+			rts    : collision_detection,
+			rtscts : collision_detection,
+			xany   : false,
+			xoff   : false,
+			xon    : false,
 		},
 	};
 }
