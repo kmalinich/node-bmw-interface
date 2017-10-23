@@ -14,8 +14,8 @@
 		"object-path": "^0.11.4",
 		"pad": "^2.0.1",
 		"performance-now": "^2.1.0",
-		"serialport": "^6.0.0",
-		"socket.io": "^2.0.3",
+		"serialport": "^6.0.3",
+		"socket.io": "^2.0.4",
 		"trucolor": "^0.6.6",
 		"zeromq": "^4.6.0"
 	},
