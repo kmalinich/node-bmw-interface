@@ -81,7 +81,7 @@ function load_modules(pass) {
 	// Vehicle data bus interface libraries
 	intf = {
 		config : {
-			debug : process.env.BMWD_DEBUG_INTERFACE || false,
+			debug : process.env.BMWI_DEBUG_INTERFACE || false,
 		},
 		intf : null,
 		opts : {},
@@ -94,7 +94,7 @@ function load_modules(pass) {
 	// Vehicle data bus protocol config
 	proto = {
 		config : {
-			debug      : process.env.BMWD_DEBUG_PROTOCOL || false,
+			debug      : process.env.BMWI_DEBUG_PROTOCOL || false,
 			length_min : 5,
 			length_max : 1000,
 			error_max  : 50,
