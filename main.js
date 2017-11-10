@@ -185,6 +185,4 @@ function term() {
 
 
 // FASTEN SEATBELTS
-term_config(() => {
-	init();
-});
+term_config(init);
