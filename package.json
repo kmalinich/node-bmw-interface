@@ -12,7 +12,7 @@
 		"jsonfile": "^4.0.0",
 		"multipad": "^1.1.1",
 		"object-path": "^0.11.4",
-		"pad": "^2.0.1",
+		"pad": "^2.0.3",
 		"performance-now": "^2.1.0",
 		"serialport": "^6.0.4",
 		"socket.io": "^2.0.4",
