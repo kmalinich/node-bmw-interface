@@ -150,10 +150,9 @@ function init() {
 			load_modules(() => { // Load IBUS module node modules
 				intf.intf.init(() => { // Open defined interface
 					socket.init(() => { // Open zeroMQ server
-						host_data.init(() => { // Initialize host data object
-							api.init(() => { // Start Express API server
-								log.msg({ msg : 'Initialized' });
-							}, term);
+						api.init(() => { // Start Express API server
+							if (app_intf === 'ibus') host_data.init(); // Initialize host data object
+							log.msg({ msg : 'Initialized' });
 						}, term);
 					}, term);
 				}, term);
@@ -165,7 +164,7 @@ function init() {
 
 // Save-N-Exit
 function bail() {
-	json.write(() => { // Write JSON config and status files
+	json.status_write(() => { // Write JSON status files
 		process.exit();
 	});
 }
@@ -175,10 +174,9 @@ function term() {
 	log.msg({ msg : 'Terminating' });
 
 	intf.intf.term(() => { // Close defined interface
-		host_data.term(() => { // Terminate host data timeout
-			socket.term(() => { // Close zeroMQ server
-				json.reset(bail); // Reset status vars pertinent to launching app
-			}, term);
+		socket.term(() => { // Close zeroMQ server
+			host_data.term(); // Terminate host data timeout
+			json.reset(bail); // Reset status vars pertinent to launching app
 		}, term);
 	}, bail);
 }
