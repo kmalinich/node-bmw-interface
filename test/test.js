@@ -15,7 +15,6 @@ var api_header          = {
 // npm libraries
 now = require('performance-now');
 os  = require('os');
-pad = require('pad');
 
 // node-bmw libraries
 bus.modules = require('bus-modules');
