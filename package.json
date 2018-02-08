@@ -7,7 +7,7 @@
 		"amp-message": "^0.1.2",
 		"callers-path": "^1.0.5",
 		"chump": "^1.2.0",
-		"defaults-deep": "^0.2.3",
+		"defaults-deep": "^0.2.4",
 		"express": "^4.16.2",
 		"jsonfile": "^4.0.0",
 		"multipad": "^1.1.1",
