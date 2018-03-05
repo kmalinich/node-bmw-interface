@@ -7,9 +7,7 @@ app_intf = process.argv[2] || process.env.BMWI_INTERFACE || 'ibus';
 
 process.title = app_name + '@' + app_intf;
 
-// npm libraries
-now = require('performance-now');
-os  = require('os');
+terminating = false;
 
 // node-bmw libraries
 api     = require('api');
@@ -19,25 +17,27 @@ hex     = require('hex');
 json    = require('json');
 log     = require('log-output');
 socket  = require('socket');
-update  = require('update');
+
+// Class/event-based modules
+update = new (require('update'))();
 
 
 // Configure term event listeners
 function term_config(pass) {
 	process.on('SIGTERM', () => {
 		console.log('');
-		log.msg({ msg : 'Caught SIGTERM' });
+		log.msg('Caught SIGTERM');
 		process.nextTick(term);
 	});
 
 	process.on('SIGINT', () => {
 		console.log('');
-		log.msg({ msg : 'Caught SIGINT' });
+		log.msg('Caught SIGINT');
 		process.nextTick(term);
 	});
 
 	process.on('exit', () => {
-		log.msg({ msg : 'Terminated' });
+		log.msg('Terminated');
 	});
 
 	process.nextTick(pass);
@@ -104,24 +104,28 @@ function load_modules(pass) {
 	// Load vehicle interface and protocol libs
 	switch (app_intf) {
 		case 'can0' :
-		case 'can1' :
+		case 'can1' : {
 			intf.type = 'can';
 			break;
+		}
 
-		case 'dbus' :
+		case 'dbus' : {
 			intf.type = 'bmw';
 			break;
+		}
 
 		case 'ibus' :
-		case 'kbus' :
+		case 'kbus' : {
 			intf.coll = true;
 			intf.type = 'bmw';
 			break;
+		}
 
-		case 'lcd' :
+		case 'lcd' : {
 			intf.pari = 'none';
 			intf.type = 'lcd';
 			break;
+		}
 	}
 
 	// Populate interface, options, and protocol
@@ -134,7 +138,7 @@ function load_modules(pass) {
 	// Host data object (CPU, memory, etc.)
 	host_data = require('host-data');
 
-	log.module({ msg : 'Loaded modules' });
+	log.module('Loaded modules');
 
 	process.nextTick(pass);
 }
@@ -142,7 +146,7 @@ function load_modules(pass) {
 
 // Global init
 function init() {
-	log.msg({ msg : 'Initializing' });
+	log.msg('Initializing');
 
 	json.read(() => { // Read JSON config and status files
 		json.reset(() => { // Reset status vars pertinent to launching app
@@ -151,7 +155,7 @@ function init() {
 					socket.init(() => { // Open zeroMQ server
 						api.init(() => { // Start Express API server
 							if (app_intf === 'ibus') host_data.init(); // Initialize host data object
-							log.msg({ msg : 'Initialized' });
+							log.msg('Initialized');
 						}, term);
 					}, term);
 				}, term);
@@ -164,13 +168,18 @@ function init() {
 // Save-N-Exit
 function bail() {
 	json.status_write(() => { // Write JSON status files
+		log.msg('Terminated');
 		process.exit();
 	});
 }
 
 // Global term
 function term() {
-	log.msg({ msg : 'Terminating' });
+	if (terminating === true) return;
+
+	terminating = true;
+
+	log.msg('Terminating');
 
 	intf.intf.term(() => { // Close defined interface
 		socket.term(() => { // Close zeroMQ server

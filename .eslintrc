@@ -27,10 +27,10 @@
 		"notify": false,
 		"now": false,
 		"obc_values": false,
-		"os": false,
 		"proto": false,
 		"socket": false,
 		"status": false,
+		"terminating": false,
 		"update": false
 	},
 	"parserOptions": {
