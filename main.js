@@ -154,7 +154,7 @@ function init() {
 				intf.intf.init(() => { // Open defined interface
 					socket.init(() => { // Open zeroMQ server
 						api.init(() => { // Start Express API server
-							if (app_intf === 'ibus') host_data.init(); // Initialize host data object
+							host_data.init(); // Initialize host data object
 							log.msg('Initialized');
 						}, term);
 					}, term);
