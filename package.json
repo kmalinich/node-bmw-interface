@@ -41,7 +41,7 @@
 		"url": "git+https://github.com/kmalinich/node-bmw-interface.git"
 	},
 	"scripts": {
-		"postinstall": "/usr/bin/env bash ./cp-v8-v9.sh"
+		"postinstall": "/usr/bin/env bash ./cp-index.sh"
 	},
 	"version": "0.0.1"
 }
