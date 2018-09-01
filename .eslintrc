@@ -4,6 +4,7 @@
 		"es6": true,
 		"jquery": false,
 		"node": true,
+		"serviceworker": false,
 		"worker": false
 	},
 	"extends": [
@@ -34,7 +35,7 @@
 		"update": false
 	},
 	"parserOptions": {
-		"ecmaVersion": 2017,
+		"ecmaVersion": 9,
 		"sourceType": "module"
 	},
 	"plugins": [
