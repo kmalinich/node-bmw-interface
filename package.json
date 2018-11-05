@@ -8,7 +8,7 @@
 		"callers-path": "^1.0.5",
 		"chump": "git+https://github.com/kmalinich/chump.git",
 		"defaults-deep": "^0.2.4",
-		"express": "^4.16.3",
+		"express": "^4.16.4",
 		"jsonfile": "^5.0.0",
 		"multipad": "^1.1.1",
 		"object-path": "^0.11.4",
@@ -16,7 +16,7 @@
 		"serialport": "^7.0.2",
 		"socket.io": "^2.1.1",
 		"trucolor": "^0.7.1",
-		"zeromq": "^5.0.0"
+		"zeromq": "^5.1.0"
 	},
 	"description": "NodeJS-powered BMW IBUS interface client",
 	"devDependencies": {},
