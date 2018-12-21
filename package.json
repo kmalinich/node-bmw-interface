@@ -13,7 +13,7 @@
 		"multipad": "^1.1.1",
 		"object-path": "^0.11.4",
 		"performance-now": "^2.1.0",
-		"serialport": "^7.1.0",
+		"serialport": "^7.1.1",
 		"socket.io": "^2.2.0",
 		"trucolor": "^0.7.2",
 		"zeromq": "^5.1.0"
