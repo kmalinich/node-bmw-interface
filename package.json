@@ -18,13 +18,12 @@
 		"trucolor": "^1.0.0",
 		"zeromq": "^5.1.0"
 	},
-	"description": "NodeJS-powered BMW IBUS interface client",
+	"description": "zeroMQ BMW CANBUS/IBUS/KBUS server",
 	"devDependencies": {},
 	"homepage": "https://github.com/kmalinich/node-bmw-interface#readme",
 	"keywords": [
 		"bmw",
 		"canbus",
-		"dbus",
 		"ibus",
 		"kbus"
 	],
@@ -45,3 +44,4 @@
 	},
 	"version": "0.0.1"
 }
+
