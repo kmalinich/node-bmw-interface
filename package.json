@@ -10,7 +10,6 @@
 		"defaults-deep": "^0.2.4",
 		"express": "^4.16.4",
 		"jsonfile": "^5.0.0",
-		"multipad": "^1.1.1",
 		"object-path": "^0.11.4",
 		"performance-now": "^2.1.0",
 		"serialport": "^7.1.4",
