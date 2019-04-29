@@ -12,7 +12,7 @@
 		"jsonfile": "^5.0.0",
 		"object-path": "^0.11.4",
 		"performance-now": "^2.1.0",
-		"serialport": "^7.1.4",
+		"serialport": "^7.1.5",
 		"socket.io": "^2.2.0",
 		"trucolor": "^1.0.2",
 		"zeromq": "^5.1.0"
@@ -31,8 +31,8 @@
 	"name": "node-bmw-interface",
 	"optionalDependencies": {
 		"pi-temperature": "^2.0.0",
-		"rawcan": "^1.1.4",
-		"smc": "^2.0.0"
+		"smc": "^2.0.0",
+		"socketcan": "^2.4.0"
 	},
 	"repository": {
 		"type": "git",
