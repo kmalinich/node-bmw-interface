@@ -14,10 +14,9 @@
 		"performance-now": "^2.1.0",
 		"serialport": "^7.1.5",
 		"socket.io": "^2.2.0",
-		"trucolor": "^1.0.2",
-		"zeromq": "^5.1.0"
+		"trucolor": "^1.0.2"
 	},
-	"description": "zeroMQ BMW CANBUS/IBUS/KBUS server",
+	"description": "BMW CANBUS/IBUS/KBUS server",
 	"devDependencies": {},
 	"homepage": "https://github.com/kmalinich/node-bmw-interface#readme",
 	"keywords": [
@@ -30,8 +29,6 @@
 	"main": "launch.sh",
 	"name": "node-bmw-interface",
 	"optionalDependencies": {
-		"pi-temperature": "^2.0.0",
-		"smc": "^2.0.0",
 		"socketcan": "^2.4.0"
 	},
 	"repository": {

@@ -10,7 +10,6 @@ process.title = app_name + '@' + app_intf;
 terminating = false;
 
 // node-bmw libraries
-api     = require('api');
 bitmask = require('bitmask');
 bus     = require('bus');
 hex     = require('hex');
@@ -135,9 +134,6 @@ function load_modules(pass) {
 
 	if (intf.type === 'bmw') proto.proto = require('proto-' + intf.type);
 
-	// Host data object (CPU, memory, etc.)
-	host_data = require('host-data');
-
 	log.module('Loaded modules');
 
 	process.nextTick(pass);
@@ -146,17 +142,14 @@ function load_modules(pass) {
 
 // Global init
 function init() {
-	log.msg('Initializing');
+	log.msg('Initializing interface: \'' + app_intf + '\'');
 
 	json.read(() => { // Read JSON config and status files
 		json.reset(() => { // Reset status vars pertinent to launching app
 			load_modules(() => { // Load IBUS module node modules
 				intf.intf.init(() => { // Open defined interface
-					socket.init(() => { // Open zeroMQ server
-						api.init(() => { // Start Express API server
-							host_data.init(); // Initialize host data object
-							log.msg('Initialized');
-						}, term);
+					socket.init(() => { // Open socket server
+						log.msg('Initialized interface: \'' + app_intf + '\'');
 					}, term);
 				}, term);
 			}, term);
@@ -183,7 +176,6 @@ function term() {
 
 	intf.intf.term(() => { // Close defined interface
 		socket.term(() => { // Close zeroMQ server
-			host_data.term(); // Terminate host data timeout
 			json.reset(bail); // Reset status vars pertinent to launching app
 		}, term);
 	}, bail);

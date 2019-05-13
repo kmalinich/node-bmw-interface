@@ -11,7 +11,6 @@
 		"eslint:recommended"
 	],
 	"globals": {
-		"api": false,
 		"app_intf": false,
 		"app_name": false,
 		"app_path": false,
