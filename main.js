@@ -44,20 +44,12 @@ function term_config(pass) {
 
 // Render serialport options object
 function serial_opts(parity, collision_detection) {
-	// DBUS+IBUS+KBUS :  9600 8e1
-	// USB serial LCD : 57600 8n1
-
-	// Trick Daddy - I'm a Thug
-	let baud_rate;
-	switch (parity) {
-		case 'even' : baud_rate = 9600; break;
-		default     : baud_rate = 57600;
-	}
+	// DBUS+IBUS+KBUS : 9600 8e1
 
 	return {
 		init : {
 			autoOpen : false,
-			baudRate : baud_rate,
+			baudRate : 9600,
 			parity   : parity,
 			rtscts   : collision_detection,
 		},
@@ -117,13 +109,6 @@ function load_modules(pass) {
 		case 'kbus' : {
 			intf.coll = true;
 			intf.type = 'bmw';
-			break;
-		}
-
-		case 'lcd' : {
-			intf.pari = 'none';
-			intf.type = 'lcd';
-			break;
 		}
 	}
 
@@ -160,7 +145,7 @@ function init() {
 
 // Save-N-Exit
 function bail() {
-	json.status_write(() => { // Write JSON status files
+	json.write(() => { // Write JSON config and status files
 		log.msg('Terminated');
 		process.exit();
 	});
