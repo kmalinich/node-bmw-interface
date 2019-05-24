@@ -11,12 +11,13 @@
 		"eslint:recommended"
 	],
 	"globals": {
+		"api": false,
 		"app_intf": false,
 		"app_name": false,
 		"app_path": false,
 		"bitmask": false,
 		"bus": false,
-		"config": false,
+		"config": true,
 		"gpio": false,
 		"hex": false,
 		"host_data": false,
@@ -25,12 +26,13 @@
 		"kodi": false,
 		"log": false,
 		"notify": false,
-		"now": false,
+		"num": false,
 		"obc_values": false,
+		"objfmt": false,
 		"proto": false,
 		"socket": false,
-		"status": false,
-		"terminating": false,
+		"status": true,
+		"terminating": true,
 		"update": false
 	},
 	"parserOptions": {
