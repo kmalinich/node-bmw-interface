@@ -55,7 +55,7 @@ _smf() {
 
 
 _out "JSON backup"
-# ./json-backup
+./json-backup
 
 _out "Repo fetch"
 git fetch --all --prune
