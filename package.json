@@ -6,18 +6,16 @@
 	"dependencies": {
 		"amp-message": "^0.1.2",
 		"callers-path": "^1.0.5",
-		"chump": "git+https://github.com/kmalinich/chump.git",
 		"defaults-deep": "^0.2.4",
-		"express": "^4.16.4",
+		"express": "^4.17.1",
 		"jsonfile": "^5.0.0",
 		"object-path": "^0.11.4",
 		"performance-now": "^2.1.0",
-		"serialport": "^7.1.4",
+		"serialport": "^7.1.5",
 		"socket.io": "^2.2.0",
-		"trucolor": "^1.0.2",
-		"zeromq": "^5.1.0"
+		"trucolor": "^1.0.3"
 	},
-	"description": "zeroMQ BMW CANBUS/IBUS/KBUS server",
+	"description": "BMW CANBUS/IBUS/KBUS server",
 	"devDependencies": {},
 	"homepage": "https://github.com/kmalinich/node-bmw-interface#readme",
 	"keywords": [
@@ -30,9 +28,7 @@
 	"main": "launch.sh",
 	"name": "node-bmw-interface",
 	"optionalDependencies": {
-		"pi-temperature": "^2.0.0",
-		"rawcan": "^1.1.4",
-		"smc": "^2.0.0"
+		"socketcan": "^2.4.0"
 	},
 	"repository": {
 		"type": "git",
