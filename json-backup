@@ -1,18 +1,27 @@
 #!/usr/bin/env bash
 
 DIR_BASE="/usr/local"
-DIR_BMWCD="${DIR_BASE}/bmwi"
+DIR_BMWI="${DIR_BASE}/bmwi"
 
 DATE_STR="$(date '+%Y%m%d')"
 
-if [[ ! -d "${DIR_BMWCD}" ]]; then
-	exit 0;
-fi
+ARRAY_FILES=(
+'status.json'
+'config-can0.json'
+'config-can1.json'
+'config-dbus.json'
+'config-ibus.json'
+'config-kbus.json'
+)
 
-cd "${DIR_BMWCD}" || exit 1
 
-mkdir -p json.bak
+[[ ! -d "${DIR_BMWI}" ]] && exit 0
 
-for JSON_FILE in config status; do
-	cp -v ${JSON_FILE}.json "json.bak/${JSON_FILE}.json.${DATE_STR}"
+cd "${DIR_BMWI}" || exit 1
+
+mkdir -p json.bak || exit 2
+
+for JSON_FILE in "${ARRAY_FILES[@]}"; do
+	[[ ! -s "${JSON_FILE}" ]] && continue
+	cp -v "${JSON_FILE}" "json.bak/${JSON_FILE}.${DATE_STR}"
 done
