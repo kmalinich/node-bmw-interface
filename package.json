@@ -13,7 +13,7 @@
 		"performance-now": "^2.1.0",
 		"serialport": "^7.1.5",
 		"socket.io": "^2.2.0",
-		"trucolor": "^1.0.3"
+		"trucolor": "^1.0.6"
 	},
 	"description": "BMW CANBUS/IBUS/KBUS server",
 	"devDependencies": {},
