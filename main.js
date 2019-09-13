@@ -119,7 +119,7 @@ function load_modules(pass) {
 
 	if (intf.type === 'bmw') proto.proto = require('proto-' + intf.type);
 
-	log.module('Loaded modules');
+	log.msg('Loaded modules');
 
 	process.nextTick(pass);
 }
@@ -131,7 +131,7 @@ function init() {
 
 	json.read(() => { // Read JSON config and status files
 		json.reset(() => { // Reset status vars pertinent to launching app
-			load_modules(() => { // Load IBUS module node modules
+			load_modules(() => { // Configure interface and protocol
 				intf.intf.init(() => { // Open defined interface
 					socket.init(() => { // Open socket server
 						log.msg('Initialized interface: \'' + app_intf + '\'');
