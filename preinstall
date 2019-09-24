@@ -16,7 +16,7 @@ ARRAY_LINK=(
 FILE_TMP="$(mktemp)"
 
 # Create temporary list of package names with versions
-jq .dependencies package.json | awk -F '"' '/"/ {print $2 "@" $4}' | sed 's/\^//g' > "${FILE_TMP}"
+jq .dependencies package.json | awk -F '"' '/"/ {print $2 "@" $4}' > "${FILE_TMP}"
 
 
 # Install version-specific npm packages globally
