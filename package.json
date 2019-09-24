@@ -1,10 +1,12 @@
 {
 	"author": "kdm <kennygprs@gmail.com>",
+	"bin": {
+		"bmwcd": "bin/bmwi"
+	},
 	"bugs": {
 		"url": "https://github.com/kmalinich/node-bmw-interface/issues"
 	},
 	"dependencies": {
-		"amp-message": "^0.1.2",
 		"callers-path": "^1.0.5",
 		"defaults-deep": "^0.2.4",
 		"express": "^4.17.1",
@@ -22,11 +24,14 @@
 	"keywords": [
 		"bmw",
 		"canbus",
+		"dcan",
+		"kcan",
+		"dbus",
 		"ibus",
 		"kbus"
 	],
 	"license": "MIT",
-	"main": "launch.sh",
+	"main": "main.js",
 	"name": "node-bmw-interface",
 	"optionalDependencies": {
 		"socketcan": "^2.4.0"
