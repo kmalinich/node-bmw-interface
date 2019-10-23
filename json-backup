@@ -6,12 +6,12 @@ DIR_BMWI="${DIR_BASE}/bmwi"
 DATE_STR="$(date '+%Y%m%d')"
 
 ARRAY_FILES=(
-'status.json'
-'config-can0.json'
-'config-can1.json'
-'config-dbus.json'
-'config-ibus.json'
-'config-kbus.json'
+'config.json'
+'status-can0.json'
+'status-can1.json'
+'status-dbus.json'
+'status-ibus.json'
+'status-kbus.json'
 )
 
 
