@@ -12,7 +12,6 @@
 		"express": "^4.17.1",
 		"json-socket": "^0.3.0",
 		"jsonfile": "^5.0.0",
-		"npm-check-updates": "^3.1.25",
 		"object-path": "^0.11.4",
 		"performance-now": "^2.1.0",
 		"serialport": "^8.0.5",
