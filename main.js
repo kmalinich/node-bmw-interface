@@ -50,7 +50,7 @@ function serial_opts(parity, collision_detection) {
 		init : {
 			autoOpen : false,
 			baudRate : 9600,
-			parity   : parity,
+			parity,
 			rtscts   : collision_detection,
 		},
 		open : {
