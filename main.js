@@ -145,7 +145,6 @@ async function term() {
 
 	await intf.intf.term(); // Close defined interface
 	await socket.term();    // Close socket server
-	await json.reset();     // Reset status vars pertinent to launching app
 	await json.write();     // Write JSON config and status files
 
 	log.msg('Terminated');
