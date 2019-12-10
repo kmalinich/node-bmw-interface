@@ -32,7 +32,7 @@
 				<Value type="unsigned" unit="volts" slope="0.1" intercept="0" min="0" max="25.5"/>
 			</Signal>
 
-			<Signal name="fuel_pump_duty" offset="40" length="16">
+			<Signal name="vehicle_speed" offset="40" length="16">
 				<Value type="unsigned" unit="kph" slope="1" intercept="0" min="0" max="4096"/>
 			</Signal>
 
