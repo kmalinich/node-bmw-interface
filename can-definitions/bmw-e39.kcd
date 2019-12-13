@@ -1,0 +1,47 @@
+<!-- https://www.desmos.com/calculator -->
+<!-- https://www.wolframalpha.com/calculators/equation-solver-calculator -->
+
+<NetworkDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="Definition.xsd" version="0.0.1">
+	<Document name="BMW-E39" version="0.0.1" author="kennygprs@gmail.com">BMW E39 CANBUS definition</Document>
+
+	<Node id="12" name="DME"/>
+
+	<Bus name="PTCAN">
+		<Message id="0x720" name="DME_720">
+			<Producer>
+				<NodeRef id="12"/>
+			</Producer>
+
+			<Signal name="temperature_coolant_c" offset="0" length="8">
+				<Value type="unsigned" unit="Celsius" slope="1" intercept="-48" min="-48" max="207"/>
+			</Signal>
+
+			<Signal name="temperature_intake_c" offset="8" length="8">
+				<Value type="unsigned" unit="celsius" slope="1" intercept="-48" min="-48" max="207"/>
+			</Signal>
+
+			<Signal name="temperature_exhaust_c" offset="16" length="8">
+				<Value type="unsigned" unit="celsius" slope="4" intercept="0" min="0" max="1020"/>
+			</Signal>
+
+			<Signal name="temperature_oil_c" offset="24" length="8">
+				<Value type="unsigned" unit="celsius" slope="1" intercept="-48" min="-48" max="207"/>
+			</Signal>
+
+			<Signal name="battery_voltage" offset="32" length="8">
+				<Value type="unsigned" unit="volts" slope="0.1" intercept="0" min="0" max="25.5"/>
+			</Signal>
+
+			<Signal name="vehicle_speed" offset="40" length="16">
+				<Value type="unsigned" unit="kph" slope="1" intercept="0" min="0" max="4096"/>
+			</Signal>
+
+			<Signal name="fuel_pump_duty" offset="56" length="8">
+				<Value type="unsigned" unit="percent" slope="0.39215686274" intercept="0" min="0" max="100"/>
+			</Signal>
+		</Message>
+	</Bus>
+</NetworkDefinition>
+
+
+<!-- vim: set filetype=xml ts=2 sw=2 tw=0 noet :-->

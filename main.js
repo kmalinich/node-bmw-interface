@@ -21,27 +21,6 @@ socket  = require('socket');
 update = new (require('update'))();
 
 
-// Configure term event listeners
-function term_config(pass) {
-	process.on('SIGTERM', () => {
-		console.log('');
-		log.msg('Caught SIGTERM');
-		process.nextTick(term);
-	});
-
-	process.on('SIGINT', () => {
-		console.log('');
-		log.msg('Caught SIGINT');
-		process.nextTick(term);
-	});
-
-	process.on('exit', () => {
-		log.msg('Terminated');
-	});
-
-	process.nextTick(pass);
-}
-
 // Render serialport options object
 function serial_opts(parity, collision_detection) {
 	// DBUS+IBUS+KBUS : 9600 8e1
@@ -50,7 +29,7 @@ function serial_opts(parity, collision_detection) {
 		init : {
 			autoOpen : false,
 			baudRate : 9600,
-			parity   : parity,
+			parity,
 			rtscts   : collision_detection,
 		},
 		open : {
@@ -63,11 +42,11 @@ function serial_opts(parity, collision_detection) {
 			xon    : false,
 		},
 	};
-}
+} // serial_opts(parity, collision_detection)
 
 // Function to load modules that require data from config object,
 // AFTER the config object is loaded
-function load_modules(pass) {
+async function load_modules() {
 	// Vehicle data bus interface libraries
 	intf = {
 		config : {
@@ -119,53 +98,67 @@ function load_modules(pass) {
 
 	if (intf.type === 'bmw') proto.proto = require('proto-' + intf.type);
 
-	log.module('Loaded modules');
+	log.msg('Loaded modules');
+} // async load_modules()
 
-	process.nextTick(pass);
-}
 
+// Configure term event listeners
+async function term_config() {
+	process.on('SIGTERM', async () => {
+		if (terminating === true) return;
+
+		console.log('');
+		config.console.output = true;
+		log.msg('Caught SIGTERM');
+		await term();
+	});
+
+	process.on('SIGINT', async () => {
+		if (terminating === true) return;
+
+		console.log('');
+		config.console.output = true;
+		log.msg('Caught SIGINT');
+		await term();
+	});
+
+	process.on('exit', () => {
+		config.console.output = true;
+		log.msg('Caught exit event');
+	});
+} // async term_config()
 
 // Global init
-function init() {
+async function init() {
 	log.msg('Initializing interface: \'' + app_intf + '\'');
 
-	json.read(() => { // Read JSON config and status files
-		json.reset(() => { // Reset status vars pertinent to launching app
-			load_modules(() => { // Load IBUS module node modules
-				intf.intf.init(() => { // Open defined interface
-					socket.init(() => { // Open socket server
-						log.msg('Initialized interface: \'' + app_intf + '\'');
-					}, term);
-				}, term);
-			}, term);
-		}, term);
-	}, term);
-}
+	await term_config();
+	await json.read();      // Read JSON config and status files
+	await json.reset();     // Reset status vars pertinent to launching app
+	await load_modules();   // Configure interface and protocol
+	await intf.intf.init(); // Open defined interface
+	await socket.init();    // Open socket server
 
-
-// Save-N-Exit
-function bail() {
-	json.write(() => { // Write JSON config and status files
-		log.msg('Terminated');
-		process.exit();
-	});
-}
+	log.msg('Initialized interface: \'' + app_intf + '\'');
+} // async init()
 
 // Global term
-function term() {
+async function term() {
 	if (terminating === true) return;
 
 	terminating = true;
 
 	log.msg('Terminating');
 
-	intf.intf.term(() => { // Close defined interface
-		socket.term(() => { // Close zeroMQ server
-			json.reset(bail); // Reset status vars pertinent to launching app
-		}, term);
-	}, bail);
-}
+	await intf.intf.term(); // Close defined interface
+	await socket.term();    // Close socket server
+	await json.write();     // Write JSON config and status files
+
+	log.msg('Terminated');
+
+	process.exit();
+} // async term()
 
 
 // FASTEN SEATBELTS
-term_config(init);
+init();
