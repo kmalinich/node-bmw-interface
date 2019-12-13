@@ -104,20 +104,27 @@ async function load_modules() {
 
 // Configure term event listeners
 async function term_config() {
-	process.on('SIGTERM', () => {
+	process.on('SIGTERM', async () => {
+		if (terminating === true) return;
+
 		console.log('');
+		config.console.output = true;
 		log.msg('Caught SIGTERM');
-		process.nextTick(term);
+		await term();
 	});
 
-	process.on('SIGINT', () => {
+	process.on('SIGINT', async () => {
+		if (terminating === true) return;
+
 		console.log('');
+		config.console.output = true;
 		log.msg('Caught SIGINT');
-		process.nextTick(term);
+		await term();
 	});
 
 	process.on('exit', () => {
-		log.msg('Terminated');
+		config.console.output = true;
+		log.msg('Caught exit event');
 	});
 } // async term_config()
 
