@@ -15,6 +15,7 @@ bus     = require('bus');
 hex     = require('hex');
 json    = require('json');
 log     = require('log-output');
+num     = require('num');
 socket  = require('socket');
 
 // Class/event-based modules
