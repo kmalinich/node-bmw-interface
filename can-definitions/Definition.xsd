@@ -22,6 +22,7 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 		<xs:annotation>
 			<xs:documentation>Definition of one or more CAN bus networks in one file</xs:documentation>
 		</xs:annotation>
+
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element maxOccurs="1" ref="Document"/>
@@ -29,6 +30,7 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 				<xs:element maxOccurs="unbounded" ref="Bus"/>
 			</xs:sequence>
 		</xs:complexType>
+
 		<xs:key name="nodeIdKey">
 			<xs:annotation>
 				<xs:documentation>Assurance that the identifier (id) of a network node is unique</xs:documentation>
@@ -36,6 +38,7 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 			<xs:selector xpath="kcd:Node"/>
 			<xs:field xpath="@id"/>
 		</xs:key>
+
 		<xs:unique name="busNameUniqueness">
 			<xs:annotation>
 				<xs:documentation>Assurance that there are no duplicate bus names (assures bus name uniqueness)</xs:documentation>
@@ -43,6 +46,7 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 			<xs:selector xpath="kcd:Bus"/>
 			<xs:field xpath="@name"/>
 		</xs:unique>
+
 		<xs:keyref name="nodeIdKeyRef" refer="nodeIdKey">
 			<xs:annotation>
 				<xs:documentation>Assurance that the references node, to identify the producer of a network message, was already created</xs:documentation>
@@ -52,23 +56,28 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 		</xs:keyref>
 	</xs:element>
 
+
 	<xs:element name="Bus">
 		<xs:annotation>
 			<xs:documentation>A network transport system that transfers the data between several nodes</xs:documentation>
 		</xs:annotation>
+
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" ref="Message" minOccurs="0"/>
 			</xs:sequence>
+
 			<xs:attribute name="name" use="required" type="xs:string">
 				<xs:annotation>
 					<xs:documentation>Human-readable name of the bus network (e.g. "Comfort")</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
+
 			<xs:attribute default="500000" name="baudrate">
 				<xs:annotation>
 					<xs:documentation>Nominal data transfer rate in baud (e.g. 500000, 125000, 100000 or 83333)</xs:documentation>
 				</xs:annotation>
+
 				<xs:simpleType>
 					<xs:restriction base="xs:nonNegativeInteger">
 						<xs:minInclusive value="5000"/>
@@ -77,6 +86,7 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 				</xs:simpleType>
 			</xs:attribute>
 		</xs:complexType>
+
 		<xs:unique name="messageIdUniqueness">
 			<xs:annotation>
 				<xs:documentation>Assurance that the identifier of a network message is unique</xs:documentation>
@@ -86,10 +96,12 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 		</xs:unique>
 	</xs:element>
 
+
 	<xs:element name="Message">
 		<xs:annotation>
 			<xs:documentation>A datagram that is used to transport payload data along the bus network</xs:documentation>
 		</xs:annotation>
+
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element minOccurs="0" ref="Notes"/>
@@ -97,25 +109,30 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 				<xs:element minOccurs="0" ref="Multiplex" maxOccurs="unbounded"/>
 				<xs:element maxOccurs="unbounded" ref="Signal" minOccurs="0"/>
 			</xs:sequence>
+
 			<xs:attribute name="id" use="required">
 				<xs:annotation>
 					<xs:documentation>The unique identifier of the message. May have 11-bit (Standard frame format) or 29-bit (Extended frame format). The identifier is usally written in hexadecimal format e.g. 0x123. If format is "extended" this identifier includes both Base ID (11 bits) and Extended ID (18 bits)</xs:documentation>
 				</xs:annotation>
+
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
 						<xs:pattern value="0x[A-F0-9]+"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
+
 			<xs:attribute name="name" use="required" type="xs:string">
 				<xs:annotation>
 					<xs:documentation>Human-readable name of the network message (e.g."OBD-Info")</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
+
 			<xs:attribute name="length" use="optional" default="auto">
 				<xs:annotation>
 					<xs:documentation>Number of bytes available in the data field of the message (data length code). "auto" (default) calculate minimum length for the contained signals in the message. Length greater than 8 is only allowed in messages with flexible data rate (fd)</xs:documentation>
 				</xs:annotation>
+
 				<xs:simpleType>
 					<xs:restriction base="xs:token">
 						<xs:enumeration value="auto"/>
@@ -138,6 +155,7 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
+
 			<xs:attribute name="interval" use="optional" default="0">
 				<xs:annotation>
 					<xs:documentation>Repetition interval of a cyclic network message in milliseconds</xs:documentation>
@@ -149,11 +167,13 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
+
 			<xs:attribute name="triggered" use="optional" type="xs:boolean" default="false">
 				<xs:annotation>
 					<xs:documentation>Sending behavior of the network message. True, if message is triggered by signal changes</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
+
 			<xs:attribute default="0" name="count">
 				<xs:annotation>
 					<xs:documentation>Number of repetitions of a triggered network message. 0 (default) for infinite repetitions</xs:documentation>
@@ -165,10 +185,12 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
+
 			<xs:attribute name="format" use="optional" default="standard">
 				<xs:annotation>
 					<xs:documentation>Frame format of the network message</xs:documentation>
 				</xs:annotation>
+
 				<xs:simpleType>
 					<xs:restriction base="xs:token">
 						<xs:enumeration value="standard"/>
@@ -176,16 +198,19 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
+
 			<xs:attribute name="fd" use="optional" type="xs:boolean" default="false">
 				<xs:annotation>
 					<xs:documentation>True, if frame formats of the network message supports flexible data rate (dual bit rate)</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
+
 			<xs:attribute name="bitrateswitch" use="optional" type="xs:boolean" default="false">
 				<xs:annotation>
 					<xs:documentation>True, if this CAN-FD message is sent with the BRS (bit-rate switch) bit set, i.e. a higher bitrate should be used to send the payload of the message. Setting this to bitrateswitch="true", if canfd="false" or canfd unset (default), is an error</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
+
 			<xs:attribute name="remote" use="optional" type="xs:boolean" default="false">
 				<xs:annotation>
 					<xs:documentation>True, if message is a remote frame. Not possible in messages with flexible data rate (fd)</xs:documentation>
@@ -194,10 +219,12 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 		</xs:complexType>
 	</xs:element>
 
+
 	<xs:element name="Multiplex">
 		<xs:annotation>
 			<xs:documentation>A looping counter to make a group of signals (MuxGroup) alternately active at a time</xs:documentation>
 		</xs:annotation>
+
 		<xs:complexType>
 			<xs:complexContent>
 				<xs:extension base="BasicSignalType">
@@ -212,18 +239,23 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
+
+
 	<xs:element name="MuxGroup">
 		<xs:annotation>
 			<xs:documentation>A group of signals that is just valid when the count value of the group matches with the looping counter (Multiplex)</xs:documentation>
 		</xs:annotation>
+
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" ref="Signal"/>
 			</xs:sequence>
+
 			<xs:attribute name="count" use="required">
 				<xs:annotation>
 					<xs:documentation>Count value of the Multiplex when the signals of this group become valid</xs:documentation>
 				</xs:annotation>
+
 				<xs:simpleType>
 					<xs:restriction base="xs:long">
 						<xs:minInclusive value="0"/>
@@ -233,10 +265,12 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 		</xs:complexType>
 	</xs:element>
 
+
 	<xs:element name="LabelSet">
 		<xs:annotation>
 			<xs:documentation>A set of label and label groups. Each label describes the meaning of a single raw value by an alias name. A single value can only belong to a one label or label group</xs:documentation>
 		</xs:annotation>
+
 		<xs:complexType>
 			<xs:choice maxOccurs="unbounded">
 				<xs:element ref="Label" minOccurs="0"/>
@@ -244,6 +278,7 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 			</xs:choice>
 		</xs:complexType>
 	</xs:element>
+
 
 	<xs:element name="Signal">
 		<xs:annotation>
@@ -264,11 +299,13 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 		</xs:complexType>
 	</xs:element>
 
+
 	<xs:element name="Notes" type="xs:string">
 		<xs:annotation>
 			<xs:documentation>Describes the purpose of the signal/variable and/or comments on its usage</xs:documentation>
 		</xs:annotation>
 	</xs:element>
+
 
 	<xs:element name="Producer">
 		<xs:annotation>
@@ -292,6 +329,7 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 		</xs:complexType>
 	</xs:element>
 
+
 	<xs:element name="Value">
 		<xs:annotation>
 			<xs:documentation>Details of how the raw value of the signal/variable shall be interpreted</xs:documentation>
@@ -302,6 +340,7 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 				<xs:annotation>
 					<xs:documentation>Datatype of the value e.g. "unsigned","signed" or IEE754 "single", "double"</xs:documentation>
 				</xs:annotation>
+
 				<xs:simpleType>
 					<xs:restriction base="xs:token">
 						<xs:enumeration value="unsigned"/>
@@ -344,10 +383,12 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 		</xs:complexType>
 	</xs:element>
 
+
 	<xs:element name="Label">
 		<xs:annotation>
-			<xs:documentation>Descriptive name for a single value e.g. to describe an enumeration, mark special,invalid or error values</xs:documentation>
+			<xs:documentation>Descriptive name for a single value e.g. to describe an enumeration, or mark special, invalid or error values</xs:documentation>
 		</xs:annotation>
+
 		<xs:complexType>
 			<xs:complexContent>
 				<xs:extension base="BasicLabelType">
@@ -361,10 +402,12 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 		</xs:complexType>
 	</xs:element>
 
+
 	<xs:element name="LabelGroup">
 		<xs:annotation>
 			<xs:documentation>Descriptive name for a sequence of adjacent values</xs:documentation>
 		</xs:annotation>
+
 		<xs:complexType>
 			<xs:complexContent>
 				<xs:extension base="BasicLabelType">
@@ -373,6 +416,7 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 							<xs:documentation>Signal raw value the label group is starting with</xs:documentation>
 						</xs:annotation>
 					</xs:attribute>
+
 					<xs:attribute name="to" use="required" type="xs:nonNegativeInteger">
 						<xs:annotation>
 							<xs:documentation>Signal raw value the label group is ending with</xs:documentation>
@@ -383,19 +427,23 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 		</xs:complexType>
 	</xs:element>
 
+
 	<xs:element name="Node">
 		<xs:annotation>
 			<xs:documentation>An endpoint connected to the network (e.g. an electronic control unit) that is able to send messages to or receive messages from other endpoints</xs:documentation>
 		</xs:annotation>
+
 		<xs:complexType>
 			<xs:sequence maxOccurs="unbounded" minOccurs="0">
 				<xs:element ref="Var"/>
 			</xs:sequence>
+
 			<xs:attribute name="id" use="required" type="xs:string">
 				<xs:annotation>
 					<xs:documentation>Unique identifier of the network node</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
+
 			<xs:attribute name="name" use="optional" default="" type="xs:string">
 				<xs:annotation>
 					<xs:documentation>Human-readable name of the network node (e.g. "Brake")</xs:documentation>
@@ -404,10 +452,12 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 		</xs:complexType>
 	</xs:element>
 
+
 	<xs:element name="NodeRef">
 		<xs:annotation>
 			<xs:documentation>An endpoint connected to the network that is able to send messages to or receive messages from other endpoints</xs:documentation>
 		</xs:annotation>
+
 		<xs:complexType>
 			<xs:attribute name="id" use="required" type="xs:string">
 				<xs:annotation>
@@ -416,6 +466,7 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 			</xs:attribute>
 		</xs:complexType>
 	</xs:element>
+
 
 	<xs:element name="Document">
 		<xs:annotation>
@@ -428,21 +479,25 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 					<xs:documentation>The name of the network definition document</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
+
 			<xs:attribute name="version">
 				<xs:annotation>
 					<xs:documentation>The version of the network definition document</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
+
 			<xs:attribute name="author">
 				<xs:annotation>
 					<xs:documentation>The owner or author of the network definition document</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
+
 			<xs:attribute name="company">
 				<xs:annotation>
 					<xs:documentation>The owner company of the network definition document</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
+
 			<xs:attribute name="date">
 				<xs:annotation>
 					<xs:documentation>The release date of this version of the network definition document</xs:documentation>
@@ -450,6 +505,7 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 			</xs:attribute>
 		</xs:complexType>
 	</xs:element>
+
 
 	<xs:element name="Var">
 		<xs:annotation>
@@ -469,6 +525,7 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 			</xs:attribute>
 		</xs:complexType>
 	</xs:element>
+
 
 	<xs:complexType name="BasicLabelType">
 		<xs:attribute name="name" use="required">
@@ -492,10 +549,11 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 		</xs:attribute>
 	</xs:complexType>
 
+
 	<xs:complexType name="BasicSignalType">
 		<xs:attribute name="endianess" default="little">
 			<xs:annotation>
-				<xs:documentation>Determines if Byteorder is big-endian (Motorola), little-endian (Intel) otherwise</xs:documentation>
+				<xs:documentation>Determines if byte order is big-endian (Motorola), little-endian (Intel) otherwise</xs:documentation>
 			</xs:annotation>
 
 			<xs:simpleType>
@@ -529,6 +587,7 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 			<xs:annotation>
 				<xs:documentation>Least significant bit offset of the signal relative to the least significant bit of the messages data payload</xs:documentation>
 			</xs:annotation>
+
 			<xs:simpleType>
 				<xs:restriction base="xs:nonNegativeInteger">
 					<xs:minInclusive value="0"/>
@@ -538,5 +597,6 @@ along with Kayak.  If not, see <http://www.gnu.org/licenses/>.
 		</xs:attribute>
 	</xs:complexType>
 </xs:schema>
+
 
 <!-- vim: set filetype=xsd ts=2 sw=2 tw=0 noet :-->
