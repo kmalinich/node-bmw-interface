@@ -17,13 +17,13 @@
 		"object-path": "^0.11.4",
 		"performance-now": "^2.1.0",
 		"socket.io": "^2.3.0",
-		"trucolor": "^1.0.6"
+		"trucolor": "^2.0.2"
 	},
 	"description": "BMW CANBUS/IBUS/KBUS server",
 	"devDependencies": {
 		"eslint": "^6.8.0",
 		"eslint-config-esnext": "^4.0.0",
-		"eslint-plugin-import": "^2.20.0",
+		"eslint-plugin-import": "^2.20.1",
 		"eslint-plugin-node": "^11.0.0",
 		"eslint-plugin-promise": "^4.2.1",
 		"eslint-plugin-standard": "^4.0.1"
@@ -45,8 +45,8 @@
 	"main": "main.js",
 	"name": "node-bmw-interface",
 	"optionalDependencies": {
-		"serialport": "7.1.5",
-		"socketcan": "^2.6.0"
+		"serialport": "8.0.7",
+		"socketcan": "^2.7.0"
 	},
 	"repository": {
 		"type": "git",
