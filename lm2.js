@@ -16,3 +16,7 @@ const parser = port.pipe(new ByteLength({
 }));
 
 parser.on('data', console.log); // will have 16 bytes per data event
+
+
+console.log('Awaiting data');
+console.log('');
