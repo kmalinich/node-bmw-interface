@@ -12,10 +12,18 @@ const port = new SerialPort('/dev/lm2', {
 port.on('error', console.error);
 
 const parser = port.pipe(new ByteLength({
-	length : 1,
+	length : 6,
 }));
 
-parser.on('data', console.log); // will have 16 bytes per data event
+parser.on('data', data => {
+	// const lambda = ((data[4] << 8) + data[5]) / 1000;
+	let lambda = (((data[4] * 128) + data[5]) / 1000) + 0.5;
+	lambda = parseFloat(lambda.toFixed(3));
+
+	// const lambda = data[4] + data[5];
+
+	console.log({ data, lambda });
+}); // will have 16 bytes per data event
 
 
 console.log('Awaiting data');
