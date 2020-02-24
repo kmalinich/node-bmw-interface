@@ -13,10 +13,10 @@ const parser = port.pipe(new ByteLength({
 
 parser.on('data', data => {
 	let lambda = (((data[4] * 128) + data[5]) / 1000) + 0.5;
-	lambda = parseFloat(lambda.toFixed(3));
+	lambda = lambda.toFixed(3);
 
 
-	console.log({ data, lambda });
+	console.log({ lambda, data });
 }); // will have 16 bytes per data event
 
 

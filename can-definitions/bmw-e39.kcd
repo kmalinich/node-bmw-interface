@@ -30,9 +30,9 @@
 				<NodeRef id="12" />
 			</Producer>
 
-			<Signal name="engine_fueling_active"    offset="51" />
-			<Signal name="engine_fueling_cut"       offset="50" />
-			<Signal name="engine_fueling_full_load" offset="52" />
+			<Signal name="engine_fueling_active"    offset="51" length="1" ><Value unit="boolean" slope="1" intercept="0" min="0" max="1" /></Signal>
+			<Signal name="engine_fueling_cut"       offset="50" length="1" ><Value unit="boolean" slope="1" intercept="0" min="0" max="1" /></Signal>
+			<Signal name="engine_fueling_full_load" offset="52" length="1" ><Value unit="boolean" slope="1" intercept="0" min="0" max="1" /></Signal>
 		</Message>
 
 		<Message id="0x720" name="DME_720">
