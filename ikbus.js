@@ -1,9 +1,10 @@
 const SerialPort = require('serialport');
-const IKBUS       = require('./lib/parser-bmw');
+const IKBUS      = require('./lib/parser-ikbus');
 
 
-const port = new SerialPort('/dev/kbus', {
-	baudRate : 19200,
+const port = new SerialPort('/dev/ibus', {
+	baudRate : 9600,
+	parity   : 'even',
 });
 
 port.on('error', console.error);
@@ -12,7 +13,7 @@ port.on('error', console.error);
 const parser = port.pipe(new IKBUS());
 
 parser.on('data', data => {
-	console.log({ data });
+	console.log({ msg0 : { data } });
 });
 
 
