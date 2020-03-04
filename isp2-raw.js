@@ -107,22 +107,27 @@ function proc_isp2(buffer) {
 		// 1 1 0 - Lambda value not valid - requires free air calibration
 		// 1 1 1 - Lambda value is flash level in 1/10%
 
-		const mask = bitmask.check(frame[0]).mask;
+		const mask = bitmask.check(frame[2]).mask;
+
+		if (typeof mask    === 'undefined') return;
+		if (typeof mask.b2 === 'undefined') return;
+		if (typeof mask.b3 === 'undefined') return;
+		if (typeof mask.b4 === 'undefined') return;
 
 		let status = 'unknown';
 
-		switch (mask.bit2) {
+		switch (mask.b2) {
 			case false : {
-				switch (mask.bit3) {
+				switch (mask.b3) {
 					case false : {
-						switch (mask.bit4) {
+						switch (mask.b4) {
 							case false : status = 'Lambda valid'; break;
 							case true  : status = 'Warming up, value is %';
 						}
 						break;
 					}
 					case true : {
-						switch (mask.bit4) {
+						switch (mask.b4) {
 							case false : status = 'Lambda value not valid - free air calibration in progress'; break;
 							case true  : status = 'Value is error code';
 						}
@@ -132,16 +137,16 @@ function proc_isp2(buffer) {
 			}
 
 			case true : {
-				switch (mask.bit3) {
+				switch (mask.b3) {
 					case false : {
-						switch (mask.bit4) {
+						switch (mask.b4) {
 							case false : status = 'Value is O2 %'; break;
 							case true  : status = 'Heater calibration, value is calibration countdown';
 						}
 						break;
 					}
 					case true : {
-						switch (mask.bit4) {
+						switch (mask.b4) {
 							case false : status = 'Lambda value not valid - requires free air calibration'; break;
 							case true  : status = 'Value is flash %';
 						}
@@ -166,7 +171,13 @@ function proc_isp2(buffer) {
 		// Bytes 2 and 3 of the message contain lambda or status detail information
 		const data = {
 			status,
+			frame,
 			lambda : (((frame[4] * 128) + frame[5]) / 1000) + 0.5,
+
+			// mask0 : bitmask.check(frame[0]).mask,
+			// mask1 : bitmask.check(frame[1]).mask,
+			// mask2 : bitmask.check(frame[2]).mask,
+			// mask3 : bitmask.check(frame[3]).mask,
 		};
 
 		// Format up the lambda data a little bit
