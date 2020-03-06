@@ -170,9 +170,8 @@ function proc_isp2(buffer) {
 
 		// Bytes 2 and 3 of the message contain lambda or status detail information
 		const data = {
-			status,
-			frame,
-			lambda : (((frame[4] * 128) + frame[5]) / 1000) + 0.5,
+			// frame,
+			v : (((frame[4] * 128) + frame[5]) / 1000) + 0.5,
 
 			// mask0 : bitmask.check(frame[0]).mask,
 			// mask1 : bitmask.check(frame[1]).mask,
@@ -181,8 +180,14 @@ function proc_isp2(buffer) {
 		};
 
 		// Format up the lambda data a little bit
-		data.lambda = parseFloat(data.lambda.toFixed(3));
+		data.v = parseFloat(data.v.toFixed(3));
 
+		if (status === 'Lambda valid') {
+			process.stdout.write(data.v + '\r');
+			return;
+		}
+
+		status.st = status;
 		console.log(data);
 	}
 }
@@ -201,7 +206,3 @@ const parser = port.pipe(new ByteLength({
 parser.on('data', data => {
 	proc_isp2(data);
 }); // will have 16 bytes per data event
-
-
-console.log('Awaiting data');
-console.log('');
