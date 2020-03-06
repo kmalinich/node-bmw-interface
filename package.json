@@ -13,7 +13,7 @@
 		"defaults-deep": "^0.2.4",
 		"express": "^4.17.1",
 		"json-socket": "^0.3.0",
-		"jsonfile": "^5.0.0",
+		"jsonfile": "^6.0.0",
 		"object-path": "^0.11.4",
 		"performance-now": "^2.1.0",
 		"socket.io": "^2.3.0",
@@ -53,7 +53,7 @@
 		"url": "git+https://github.com/kmalinich/node-bmw-interface.git"
 	},
 	"scripts": {
-		"postinstall": "/usr/bin/env bash ./postinstall"
+		"preinstall": "/usr/bin/env bash ./preinstall"
 	},
 	"type": "script",
 	"version": "0.0.1"
