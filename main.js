@@ -122,11 +122,6 @@ async function term_config() {
 		log.msg('Caught SIGINT');
 		await term();
 	});
-
-	process.on('exit', () => {
-		config.console.output = true;
-		log.msg('Caught exit event');
-	});
 } // async term_config()
 
 // Global init
