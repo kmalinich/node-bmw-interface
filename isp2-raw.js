@@ -37,8 +37,9 @@ function proc_isp2(buffer) {
 	if (array.length < 2) return;
 
 	if (array.length > 6) {
-		array = [];
 		console.log('Emptying array, data is too long');
+		array.splice(0, array.length);
+		cursor = 0;
 		return;
 	}
 
@@ -48,8 +49,9 @@ function proc_isp2(buffer) {
 
 	// Return here if a properly formed header as per the specification is not detected
 	if (!header_present) {
-		array = [];
-		console.log('Emptying array, header not present');
+		console.log('Splicing 1 from beginning of array, header not present');
+		array.splice(0, 1);
+		cursor--;
 		return;
 	}
 
@@ -64,8 +66,9 @@ function proc_isp2(buffer) {
 
 	// Empty array and return here if alleged length is outside of the bounds of the specification
 	if (alleged_length < 1 || alleged_length > 7) {
-		array = [];
 		console.log('Emptying array, alleged length %i too long or too short', alleged_length);
+		array.splice(0, array.length);
+		cursor = 0;
 		return;
 	}
 
@@ -73,14 +76,14 @@ function proc_isp2(buffer) {
 	while (cursor > 3 && cursor >= (alleged_length + 4)) {
 		// Full frame accumulated
 		// Copy command from the array
-		const FullMsgLength = (array[1] & ~0x80) + 4;
+		const fullMessageLength = (array[1] & ~0x80) + 4;
 
-		const frame = Buffer.from(array.slice(0, FullMsgLength));
+		const frame = Buffer.from(array.slice(0, fullMessageLength));
 
 		// Preserve extra data
 		array = array.slice(frame.length, array.length);
 
-		cursor -= FullMsgLength;
+		cursor -= fullMessageLength;
 
 		// Bytes 0 and 1 of the message contain function/status information
 
@@ -171,6 +174,8 @@ function proc_isp2(buffer) {
 		// Bytes 2 and 3 of the message contain lambda or status detail information
 		const data = {
 			// frame,
+			status,
+
 			v : (((frame[4] * 128) + frame[5]) / 1000) + 0.5,
 
 			// mask0 : bitmask.check(frame[0]).mask,
