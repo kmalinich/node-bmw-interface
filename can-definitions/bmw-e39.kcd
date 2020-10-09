@@ -25,6 +25,32 @@
 			<Signal name="engine_torque_output"               offset="56" length="8" ><Value unit="percent" slope="0.3921568627450980" max="100"   /></Signal>
 		</Message>
 
+		<Message id="0x545" name="DME_545">
+			<Producer>
+				<NodeRef id="12" />
+			</Producer>
+
+			<!-- Byte 0 -->
+			<Signal name="dme_status_check_engine"   offset="1" length="1" ><Value unit="boolean" slope="1" intercept="0" min="0" max="1" /></Signal>
+			<Signal name="dme_status_cruise"         offset="3" length="1" ><Value unit="boolean" slope="1" intercept="0" min="0" max="1" /></Signal>
+			<Signal name="dme_status_eml"            offset="4" length="1" ><Value unit="boolean" slope="1" intercept="0" min="0" max="1" /></Signal>
+			<Signal name="dme_status_check_fuel_cap" offset="7" length="1" ><Value unit="boolean" slope="1" intercept="0" min="0" max="1" /></Signal>
+
+			<!-- Byte 3 -->
+			<Signal name="dme_status_oil_level_error_s62"           offset="24" length="1" ><Value unit="boolean" slope="1" intercept="0" min="0" max="1" /></Signal>
+			<Signal name="dme_status_oil_level_warning"             offset="25" length="1" ><Value unit="boolean" slope="1" intercept="0" min="0" max="1" /></Signal>
+			<Signal name="dme_status_oil_level_error"               offset="26" length="1" ><Value unit="boolean" slope="1" intercept="0" min="0" max="1" /></Signal>
+			<Signal name="dme_status_coolant_overtemperature_light" offset="27" length="1" ><Value unit="boolean" slope="1" intercept="0" min="0" max="1" /></Signal>
+			<Signal name="dme_status_tachometer_light_0"            offset="28" length="1" ><Value unit="boolean" slope="1" intercept="0" min="0" max="1" /></Signal>
+			<Signal name="dme_status_tachometer_light_1"            offset="29" length="1" ><Value unit="boolean" slope="1" intercept="0" min="0" max="1" /></Signal>
+			<Signal name="dme_status_tachometer_light_2"            offset="30" length="1" ><Value unit="boolean" slope="1" intercept="0" min="0" max="1" /></Signal>
+
+			<!-- Byte 5 -->
+			<Signal name="dme_status_oil_pressure_light" offset="40" length="1" ><Value unit="boolean" slope="-1" intercept="0" min="0" max="1" /></Signal>
+			<Signal name="dme_status_ac_switch"          offset="43" length="1" ><Value unit="boolean" slope="1"  intercept="0" min="0" max="1" /></Signal>
+			<Signal name="dme_status_battery_light"      offset="44" length="1" ><Value unit="boolean" slope="-1" intercept="0" min="0" max="1" /></Signal>
+		</Message>
+
 		<Message id="0x710" name="DME_710">
 			<Producer>
 				<NodeRef id="12" />
