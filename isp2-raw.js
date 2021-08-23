@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /* eslint key-spacing      : 0 */
 /* eslint no-console       : 0 */
 /* eslint no-global-assign : 0 */
