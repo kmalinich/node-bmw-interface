@@ -188,17 +188,17 @@ function proc_isp2(buffer) {
 		data.v = parseFloat(data.v.toFixed(3));
 
 		if (status === 'Lambda valid') {
-			process.stdout.write(data.v + '\r');
+			process.stdout.write('>>>>>>> ' + data.v + '\r');
 			return;
 		}
 
 		status.st = status;
-		console.log(data);
+		console.log('>>> %o', data);
 	}
 }
 
 
-const port = new SerialPort('/dev/lm2', {
+const port = new SerialPort('/dev/ttyUSB1', {
 	baudRate : 19200,
 });
 
