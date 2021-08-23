@@ -31,7 +31,7 @@ function serial_opts(parity, collision_detection) {
 			autoOpen : false,
 			baudRate : 9600,
 			parity,
-			rtscts : collision_detection,
+			rtscts   : collision_detection,
 		},
 	};
 } // serial_opts(parity, collision_detection)
