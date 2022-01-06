@@ -198,10 +198,12 @@ function processISP2Data(newByte) {
 		let lambda    = null;
 		let warmup    = null;
 
+		let frameValue = ((frame[4] << 7 | frame[5]) & 0x1FFF);
+
 		switch (functionCode) {
 			case 0 :
 			case 1 : {
-				lambda = ((frame[4] << 7 | frame[5]) & 0x1FFF) + 500;
+				lambda = frameValue + 500;
 
 				switch (functionCode) {
 					case 0 : lambda = lambda * 0.001; break;
@@ -211,9 +213,10 @@ function processISP2Data(newByte) {
 				break;
 			}
 
-			case 4 : warmup    = ((frame[4] << 7 | frame[5]) & 0x1FFF); break;
-			case 6 : errorCode = ((frame[4] << 7 | frame[5]) & 0x1FFF);
+			case 4 : warmup    = frameValue; break;
+			case 6 : errorCode = frameValue;
 		}
+
 
 		// Byte 1, bit 0 : Remaining bit of AFR multiplier (AF0)
 		// Byte 1, bit 1 : Remaining bit of AFR multiplier (AF1)
