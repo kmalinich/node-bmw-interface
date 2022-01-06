@@ -9,73 +9,139 @@
 // https://arduino.stackexchange.com/questions/70491/decoding-serial-packets-please-check-my-work
 
 
-// Lambda is represented as 0.5 to 1.532 in 0.001 increments
-
-
-hex     = require('./share/hex');
-bitmask = require('./share/bitmask');
-
 const SerialPort = require('serialport');
 const ByteLength = require('@serialport/parser-byte-length');
+
+const { Console } = require('console');
+
+const cs = new Console({
+	stdout : process.stdout,
+	stderr : process.stderr,
+
+	inspectOptions : {
+		breakLength : Infinity,
+		colors      : true,
+		compact     : 50,
+		showHidden  : false,
+	},
+});
+
+hex = require('./share/hex');
+
 
 let array  = [];
 let cursor = 0;
 
 
-function proc_isp2(buffer) {
-	// console.log('');
+// Lambda is represented as 0.5 to 1.532 in 0.001 increments
 
-	// console.log({ buffer });
+function processISP2Data(newByte) {
+	// cs.log('');
+	// cs.log({ newByte });
 
-	// Increment cursor by the length of the new buffer data
-	cursor += buffer.length;
+	array.push(newByte); cursor++;
+	// cs.log({ array : Buffer.from(array) });
 
-	// Add new buffer data to array
-	array = [ ...array, ...Array.from(buffer) ];
 
-	// console.log({ array : Buffer.from(array) });
-
-	// Wait until at least 2 bytes have been accumulated
-	if (array.length < 2) return;
-
-	if (array.length > 6) {
-		console.log('Emptying array, data is too long');
-		array.splice(0, array.length);
-		cursor = 0;
+	if (array.length < 6) {
+		// cs.log('%o %s', genLogObj(cursor, newByte, array), 'Array is too short');
 		return;
 	}
 
-	// The first 2 bytes of a message are the message header
-	// Both bytes of a message header have their high bit set (0x80) ... for what appears to be the purpose of denoting it is the header
-	const header_present = (array[0] & 0x80) && (array[1] & 0x80);
 
-	// Return here if a properly formed header as per the specification is not detected
-	if (!header_present) {
-		console.log('Splicing 1 from beginning of array, header not present');
-		array.splice(0, 1);
-		cursor--;
+	if (!(array[0] & 0x80)) {
+		// cs.log('%o %s', genLogObj(cursor, newByte, array), '!array[0] & 0x80');
+		array.splice(0, 1); cursor--;
 		return;
 	}
 
-	// Wait until at least 6 bytes have been accumulated
-	if (array.length < 6) return;
+	if (!(array[0] & 0x20)) {
+		// cs.log('%o %s', genLogObj(cursor, newByte, array), '!array[0] & 0x20');
+		array.splice(0, 1); cursor--;
+		return;
+	}
+
+
+	if (!(array[1] & 0x80)) {
+		// cs.log('%o %s', genLogObj(cursor, newByte, array), '!array[1] & 0x80');
+		array.splice(0, 1); cursor--;
+		return;
+	}
+
+
+	if ((array[2] & 0x80)) {
+		// cs.log('%o %s', genLogObj(cursor, newByte, array), 'array[2] & 0x80');
+		array.splice(0, 1); cursor--;
+		return;
+	}
+
+	if (!(array[2] & 0x40)) {
+		// cs.log('%o %s', genLogObj(cursor, newByte, array), '!array[2] & 0x40');
+		array.splice(0, 1); cursor--;
+		return;
+	}
+
+	if ((array[2] & 0x20)) {
+		// cs.log('%o %s', genLogObj(cursor, newByte, array), 'array[2] & 0x20');
+		array.splice(0, 1); cursor--;
+		return;
+	}
+
+	if (!(array[2] & 0x02)) {
+		// cs.log('%o %s', genLogObj(cursor, newByte, array), '!array[2] & 0x02');
+		array.splice(0, 1); cursor--;
+		return;
+	}
+
+
+	if ((array[3] & 0x80)) {
+		// cs.log('%o %s', genLogObj(cursor, newByte, array), 'array[3] & 0x80');
+		array.splice(0, 1); cursor--;
+		return;
+	}
+
+
+	if ((array[4] & 0x80)) {
+		// cs.log('%o %s', genLogObj(cursor, newByte, array), 'array[4] & 0x80');
+		array.splice(0, 1); cursor--;
+		return;
+	}
+
+	if ((array[4] & 0x40)) {
+		// cs.log('%o %s', genLogObj(cursor, newByte, array), 'array[4] & 0x40');
+		array.splice(0, 1); cursor--;
+		return;
+	}
+
+
+	if ((array[5] & 0x80)) {
+		// cs.log('%o %s', genLogObj(cursor, newByte, array), 'array[5] & 0x80');
+		array.splice(0, 1); cursor--;
+		return;
+	}
+
+
+	if (array.length > 16) {
+		// cs.log('%o %s', genLogObj(cursor, newByte, array), 'Array is too long - splicing 1 from beginning of array');
+		array.splice(0, 1); cursor--;
+		return;
+	}
+
 
 	// The header also contains the total length of a message, which may be modified by any datasource device in the chain
 	// Actual message length can be found by unsetting 0x80 from byte 1
-	const alleged_length = array[1] & ~0x80;
-
-	// console.log({ buffer, array : Buffer.from(array), alleged_length });
+	const allegedLength = array[1] & ~0x80;
 
 	// Empty array and return here if alleged length is outside of the bounds of the specification
-	if (alleged_length < 1 || alleged_length > 7) {
-		console.log('Emptying array, alleged length %i too long or too short', alleged_length);
-		array.splice(0, array.length);
-		cursor = 0;
+	if (allegedLength < 1 || allegedLength > 7) {
+		// cs.log('%o | %s', genLogObj(cursor, newByte, array), `Alleged length ${allegedLength} too long or too short - splicing 1 from beginning of array`);
+		// don't splice - just return here
+		array.splice(0, 1); cursor--;
 		return;
 	}
 
 
-	while (cursor > 3 && cursor >= (alleged_length + 4)) {
+	while (cursor > 3 && cursor >= (allegedLength + 4)) {
 		// Full frame accumulated
 		// Copy command from the array
 		const fullMessageLength = (array[1] & ~0x80) + 4;
@@ -112,54 +178,42 @@ function proc_isp2(buffer) {
 		// 1 1 0 - Lambda value not valid - requires free air calibration
 		// 1 1 1 - Lambda value is flash level in 1/10%
 
-		const mask = bitmask.check(frame[2]).mask;
-
-		if (typeof mask    === 'undefined') return;
-		if (typeof mask.b2 === 'undefined') return;
-		if (typeof mask.b3 === 'undefined') return;
-		if (typeof mask.b4 === 'undefined') return;
+		const functionCode = (frame[2] >> 2 & 0x7);
 
 		let status = 'unknown';
 
-		switch (mask.b2) {
-			case false : {
-				switch (mask.b3) {
-					case false : {
-						switch (mask.b4) {
-							case false : status = 'Lambda valid'; break;
-							case true  : status = 'Warming up, value is %';
-						}
-						break;
-					}
-					case true : {
-						switch (mask.b4) {
-							case false : status = 'Lambda value not valid - free air calibration in progress'; break;
-							case true  : status = 'Value is error code';
-						}
-					}
+		switch (functionCode) {
+			case 0 : status = 'Lambda'; break;
+			case 1 : status = 'O2 %';   break;
+			case 2 : status = 'Free air calibration in progress'; break;
+			case 3 : status = 'Free air calibration required';    break;
+			case 4 : status = 'Warming up'; break;
+			case 5 : status = 'Heater calibration, value is calibration countdown'; break;
+			case 6 : status = 'Error code'; break;
+			case 7 : status = 'Flash %';
+		}
+
+
+		let errorCode = null;
+		let lambda    = null;
+		let warmup    = null;
+
+		switch (functionCode) {
+			case 0 :
+			case 1 : {
+				lambda = ((frame[4] << 7 | frame[5]) & 0x1FFF) + 500;
+
+				switch (functionCode) {
+					case 0 : lambda = lambda * 0.001; break;
+					case 1 : lambda = lambda * 0.01;
 				}
+
 				break;
 			}
 
-			case true : {
-				switch (mask.b3) {
-					case false : {
-						switch (mask.b4) {
-							case false : status = 'Value is O2 %'; break;
-							case true  : status = 'Heater calibration, value is calibration countdown';
-						}
-						break;
-					}
-					case true : {
-						switch (mask.b4) {
-							case false : status = 'Lambda value not valid - requires free air calibration'; break;
-							case true  : status = 'Value is flash %';
-						}
-					}
-				}
-			}
+			case 4 : warmup    = ((frame[4] << 7 | frame[5]) & 0x1FFF); break;
+			case 6 : errorCode = ((frame[4] << 7 | frame[5]) & 0x1FFF);
 		}
-
 
 		// Byte 1, bit 0 : Remaining bit of AFR multiplier (AF0)
 		// Byte 1, bit 1 : Remaining bit of AFR multiplier (AF1)
@@ -175,28 +229,18 @@ function proc_isp2(buffer) {
 
 		// Bytes 2 and 3 of the message contain lambda or status detail information
 		const data = {
-			// frame,
 			status,
 
-			v : (((frame[4] * 128) + frame[5]) / 1000) + 0.5,
-
-			// mask0 : bitmask.check(frame[0]).mask,
-			// mask1 : bitmask.check(frame[1]).mask,
-			// mask2 : bitmask.check(frame[2]).mask,
-			// mask3 : bitmask.check(frame[3]).mask,
+			errorCode,
+			warmup,
+			lambda,
 		};
 
-		// Format up the lambda data a little bit
-		data.v = parseFloat(data.v.toFixed(3));
+		// Format the data a little bit
+		data.lambda = parseFloat(data.lambda.toFixed(4));
 
-		if (status === 'Lambda valid') {
-			process.stdout.write('>>>>>>> ' + data.v + '\r');
-			return;
-		}
-
-		status.st = status;
-		console.log('>>> %o', data);
-	}
+		cs.log('>>> %o', data);
+	} // while (cursor > 3 && cursor >= (allegedLength + 4))
 }
 
 
@@ -211,5 +255,5 @@ const parser = port.pipe(new ByteLength({
 }));
 
 parser.on('data', data => {
-	proc_isp2(data);
-}); // will have 16 bytes per data event
+	processISP2Data(data.readUInt8(0));
+});

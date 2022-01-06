@@ -266,8 +266,3 @@ const { readFileSync } = require('fs');
 		// if (wait) await new Promise(resolve => setTimeout(resolve, 20.48));
 	}
 })();
-
-
-// will have 16 bytes per data event
-//
-// ?? Uh, no it won't!
