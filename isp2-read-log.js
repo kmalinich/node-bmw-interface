@@ -23,8 +23,7 @@ const cs = new Console({
 	},
 });
 
-hex     = require('./share/hex');
-bitmask = require('./share/bitmask');
+hex = require('./share/hex');
 
 
 let array  = [];
@@ -184,53 +183,42 @@ function processISP2Data(newByte) {
 		// 1 1 0 - Lambda value not valid - requires free air calibration
 		// 1 1 1 - Lambda value is flash level in 1/10%
 
-		const mask = bitmask.check(frame[2]).mask;
-
-		if (typeof mask?.b2 === 'undefined') return;
-		if (typeof mask?.b3 === 'undefined') return;
-		if (typeof mask?.b4 === 'undefined') return;
+		const functionCode = (frame[2] >> 2 & 0x7);
 
 		let status = 'unknown';
 
-		switch (mask.b2) {
-			case false : {
-				switch (mask.b3) {
-					case false : {
-						switch (mask.b4) {
-							case false : status = 'Lambda valid'; break;
-							case true  : status = 'Warming up, value is %';
-						}
-						break;
-					}
-					case true : {
-						switch (mask.b4) {
-							case false : status = 'Lambda value not valid - free air calibration in progress'; break;
-							case true  : status = 'Value is error code';
-						}
-					}
+		switch (functionCode) {
+			case 0 : status = 'Lambda'; break;
+			case 1 : status = 'O2 %';   break;
+			case 2 : status = 'Free air calibration in progress'; break;
+			case 3 : status = 'Free air calibration required';    break;
+			case 4 : status = 'Warming up'; break;
+			case 5 : status = 'Heater calibration, value is calibration countdown'; break;
+			case 6 : status = 'Error code'; break;
+			case 7 : status = 'Flash %';
+		}
+
+
+		let errorCode = null;
+		let lambda    = null;
+		let warmup    = null;
+
+		switch (functionCode) {
+			case 0 :
+			case 1 : {
+				lambda = ((frame[4] << 7 | frame[5]) & 0x1FFF) + 500;
+
+				switch (functionCode) {
+					case 0 : lambda = lambda * 0.001; break;
+					case 1 : lambda = lambda * 0.01;
 				}
+
 				break;
 			}
 
-			case true : {
-				switch (mask.b3) {
-					case false : {
-						switch (mask.b4) {
-							case false : status = 'Value is O2 %'; break;
-							case true  : status = 'Heater calibration, value is calibration countdown';
-						}
-						break;
-					}
-					case true : {
-						switch (mask.b4) {
-							case false : status = 'Lambda value not valid - requires free air calibration'; break;
-							case true  : status = 'Value is flash %';
-						}
-					}
-				}
-			}
+			case 4 : warmup    = ((frame[4] << 7 | frame[5]) & 0x1FFF); break;
+			case 6 : errorCode = ((frame[4] << 7 | frame[5]) & 0x1FFF);
 		}
-
 
 		// Byte 1, bit 0 : Remaining bit of AFR multiplier (AF0)
 		// Byte 1, bit 1 : Remaining bit of AFR multiplier (AF1)
@@ -246,28 +234,17 @@ function processISP2Data(newByte) {
 
 		// Bytes 2 and 3 of the message contain lambda or status detail information
 		const data = {
-			// frame,
 			status,
 
-			v : (((frame[4] * 128) + frame[5]) / 1000) + 0.5,
-
-			// mask0 : bitmask.check(frame[0]).mask,
-			// mask1 : bitmask.check(frame[1]).mask,
-			// mask2 : bitmask.check(frame[2]).mask,
-			// mask3 : bitmask.check(frame[3]).mask,
+			errorCode,
+			warmup,
+			lambda,
 		};
 
-		// Format up the lambda data a little bit
-		data.v = parseFloat(data.v.toFixed(3));
+		// Format the data a little bit
+		data.lambda = parseFloat(data.lambda.toFixed(4));
 
-		// cs.log(data);
-
-		// if (status === 'Lambda valid') {
-		// 	process.stdout.write(`>>>>>>> ${data.v}\r`);
-		// 	return;
-		// }
-
-		cs.log('>>> %o', data);
+		cs.log('>>>>>>> %o', data);
 	} // while (cursor > 3 && cursor >= (allegedLength + 4))
 }
 
@@ -279,14 +256,14 @@ const { readFileSync } = require('fs');
 	const logData = readFileSync('./innovate2.bin');
 	cs.log('logData read');
 
-	let wait = true;
+	// let wait = true;
 
 	for await (const dataByte of logData) {
 		// cs.log('dataByte: %o', dataByte);
 		processISP2Data(dataByte);
 
-		wait = !wait;
-		if (wait) await new Promise(resolve => setTimeout(resolve, 20.48));
+		// wait = !wait;
+		// if (wait) await new Promise(resolve => setTimeout(resolve, 20.48));
 	}
 })();
 
