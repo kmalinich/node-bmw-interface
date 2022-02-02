@@ -23,22 +23,22 @@ update = new (require('update'))();
 
 
 // Render serialport options object
-function serial_opts(parity, collision_detection) {
+function serial_opts(baudRate, parity, rtscts) {
 	// DBUS+IBUS+KBUS : 9600 8e1
 
 	return {
 		init : {
 			autoOpen : false,
-			baudRate : 9600,
+			baudRate,
 			parity,
-			rtscts   : collision_detection,
+			rtscts,
 		},
 	};
-} // serial_opts(parity, collision_detection)
+} // serial_opts(baudRate, parity, rtscts)
 
 // Function to load modules that require data from config object,
 // AFTER the config object is loaded
-async function load_modules() {
+function load_modules() {
 	// Vehicle data bus interface libraries
 	intf = {
 		config : {
@@ -48,8 +48,8 @@ async function load_modules() {
 		intf : null,
 		opts : {},
 		path : config.intf[app_intf],
-		pari : 'even',
-		coll : false,
+		pari : null,
+		coll : null,
 		type : null,
 	};
 
@@ -77,30 +77,45 @@ async function load_modules() {
 		}
 
 		case 'dbus' : {
-			intf.type = 'bmw';
+			intf.baudRate = 9600;
+			intf.coll     = false;
+			intf.pari     = 'even';
+			intf.type     = 'bmw';
 			break;
 		}
 
 		case 'ibus' :
 		case 'kbus' : {
-			intf.coll = true;
-			intf.type = 'bmw';
+			intf.baudRate = 9600;
+			intf.coll     = true;
+			intf.pari     = 'even';
+			intf.type     = 'bmw';
+			break;
+		}
+
+		case 'isp2' : {
+			intf.baudRate = 19200;
+			intf.coll     = false;
+			intf.pari     = 'none';
+			intf.type     = 'isp2';
 		}
 	}
 
 	// Populate interface, options, and protocol
 	// using above rendered variables
-	intf.intf = require('intf-' + intf.type);
-	intf.opts = serial_opts(intf.pari, intf.coll);
+	intf.intf = require(`intf-${intf.type}`);
+	intf.opts = serial_opts(intf.baudRate, intf.pari, intf.coll);
 
-	if (intf.type === 'bmw') proto.proto = require('proto-' + intf.type);
+	if (intf.type === 'bmw') {
+		proto.proto = require(`proto-${intf.type}`);
+	}
 
 	log.msg('Loaded modules');
-} // async load_modules()
+} // load_modules()
 
 
 // Configure term event listeners
-async function term_config() {
+function term_config() {
 	process.on('SIGTERM', async () => {
 		if (terminating === true) return;
 
@@ -118,20 +133,23 @@ async function term_config() {
 		log.msg('Caught SIGINT');
 		await term();
 	});
-} // async term_config()
+} // term_config()
 
 // Global init
 async function init() {
-	log.msg('Initializing interface: \'' + app_intf + '\'');
+	log.msg(`Initializing interface: '${app_intf}'`);
 
-	await term_config();
-	await json.read();      // Read JSON config and status files
-	await json.reset();     // Reset status vars pertinent to launching app
-	await load_modules();   // Configure interface and protocol
+	term_config();
+
+	await json.read();  // Read JSON config and status files
+	await json.reset(); // Reset status vars pertinent to launching app
+
+	load_modules(); // Configure interface and protocol
+
 	await intf.intf.init(); // Open defined interface
 	await socket.init();    // Open socket server
 
-	log.msg('Initialized interface: \'' + app_intf + '\'');
+	log.msg(`Initialized interface: '${app_intf}'`);
 } // async init()
 
 // Global term
