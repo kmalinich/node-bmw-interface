@@ -23,7 +23,7 @@ update = new (require('update'))();
 
 
 // Render serialport options object
-function serial_opts(baudRate, parity, rtscts) {
+function serialOpts(baudRate, parity, rtscts) {
 	// DBUS+IBUS+KBUS : 9600 8e1
 
 	return {
@@ -34,11 +34,11 @@ function serial_opts(baudRate, parity, rtscts) {
 			rtscts,
 		},
 	};
-} // serial_opts(baudRate, parity, rtscts)
+} // serialOpts(baudRate, parity, rtscts)
 
 // Function to load modules that require data from config object,
 // AFTER the config object is loaded
-function load_modules() {
+function loadModules() {
 	// Vehicle data bus interface libraries
 	intf = {
 		config : {
@@ -65,6 +65,7 @@ function load_modules() {
 
 			error_max : 50,
 		},
+
 		proto : null,
 	};
 
@@ -104,53 +105,25 @@ function load_modules() {
 	// Populate interface, options, and protocol
 	// using above rendered variables
 	intf.intf = require(`intf-${intf.type}`);
-	intf.opts = serial_opts(intf.baudRate, intf.pari, intf.coll);
+	intf.opts = serialOpts(intf.baudRate, intf.pari, intf.coll);
 
 	if (intf.type === 'bmw') {
 		proto.proto = require(`proto-${intf.type}`);
 	}
 
 	log.msg('Loaded modules');
-} // load_modules()
+} // loadModules()
 
 
-// Configure term event listeners
-function term_config() {
-	process.on('SIGTERM', async () => {
-		if (terminating === true) return;
+async function signalTerm(signal = 'unknown') {
+	if (terminating === true) return;
 
-		console.log('');
-		config.console.output = true;
-		log.msg('Caught SIGTERM');
-		await term();
-	});
+	console.log('');
 
-	process.on('SIGINT', async () => {
-		if (terminating === true) return;
-
-		console.log('');
-		config.console.output = true;
-		log.msg('Caught SIGINT');
-		await term();
-	});
-} // term_config()
-
-// Global init
-async function init() {
-	log.msg(`Initializing interface: '${app_intf}'`);
-
-	term_config();
-
-	await json.read();  // Read JSON config and status files
-	await json.reset(); // Reset status vars pertinent to launching app
-
-	load_modules(); // Configure interface and protocol
-
-	await intf.intf.init(); // Open defined interface
-	await socket.init();    // Open socket server
-
-	log.msg(`Initialized interface: '${app_intf}'`);
-} // async init()
+	config.console.output = true;
+	log.msg(`Caught signal: '${signal}'`);
+	await term();
+} // async signalTerm(signal)
 
 // Global term
 async function term() {
@@ -160,15 +133,45 @@ async function term() {
 
 	log.msg('Terminating');
 
-	await intf.intf.term(); // Close defined interface
-	await socket.term();    // Close socket server
-	await json.write();     // Write JSON config and status files
+	// Close defined interface
+	try {
+		await intf.intf.term();
+	}
+	catch (intfTermError) {
+		log.error(intfTermError);
+	}
+
+	await socket.term(); // Close socket server
+	await json.write();  // Write JSON config and status files
 
 	log.msg('Terminated');
 
 	process.exit();
 } // async term()
 
+
+// Global init
+async function init() {
+	// Enable console output
+	config = { console : { output : true } };
+
+	log.msg(`Initializing interface: '${app_intf}'`);
+
+	// Configure term event listeners
+	process.on('exit',    async () => signalTerm('exit'));
+	process.on('SIGINT',  async () => signalTerm('SIGINT'));
+	process.on('SIGTERM', async () => signalTerm('SIGTERM'));
+
+	await json.read();  // Read JSON config and status files
+	await json.reset(); // Reset status vars pertinent to launching app
+
+	loadModules(); // Configure interface and protocol
+
+	await intf.intf.init(); // Open defined interface
+	await socket.init();    // Open socket server
+
+	log.msg(`Initialized interface: '${app_intf}'`);
+} // async init()
 
 // FASTEN SEATBELTS
 (async () => { await init(); })();
