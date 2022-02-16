@@ -20,7 +20,6 @@
 		"intf": false,
 		"json": false,
 		"log": false,
-		"notify": false,
 		"num": false,
 		"objfmt": false,
 		"proto": false,
