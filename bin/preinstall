@@ -12,7 +12,6 @@ ARRAY_LINK=(
 'jsonfile'
 'object-path'
 'performance-now'
-'socket.io'
 'trucolor'
 )
 
