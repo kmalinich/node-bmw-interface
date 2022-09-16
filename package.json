@@ -21,7 +21,7 @@
 	},
 	"description": "BMW CANBUS/IBUS/KBUS server",
 	"devDependencies": {
-		"eslint": "^8.20.0",
+		"eslint": "^8.23.1",
 		"eslint-plugin-import": "^2.26.0",
 		"eslint-plugin-node": "^11.1.0"
 	},
