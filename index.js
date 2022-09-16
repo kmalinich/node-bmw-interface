@@ -45,12 +45,12 @@ function loadModules() {
 			debug : process.env.BMWI_DEBUG_INTERFACE || false,
 		},
 
-		intf : null,
-		opts : {},
-		path : config.intf[app_intf],
-		pari : null,
-		coll : null,
-		type : null,
+		intf   : null,
+		opts   : {},
+		parity : null,
+		path   : config.intf[app_intf],
+		rtscts : null,
+		type   : null,
 	};
 
 	// Vehicle data bus protocol config
@@ -79,8 +79,8 @@ function loadModules() {
 
 		case 'dbus' : {
 			intf.baudRate = 9600;
-			intf.coll     = false;
-			intf.pari     = 'even';
+			intf.rtscts   = false;
+			intf.parity   = 'even';
 			intf.type     = 'bmw';
 			break;
 		}
@@ -88,16 +88,16 @@ function loadModules() {
 		case 'ibus' :
 		case 'kbus' : {
 			intf.baudRate = 9600;
-			intf.coll     = true;
-			intf.pari     = 'even';
+			intf.rtscts   = true;
+			intf.parity   = 'even';
 			intf.type     = 'bmw';
 			break;
 		}
 
 		case 'isp2' : {
 			intf.baudRate = 19200;
-			intf.coll     = false;
-			intf.pari     = 'none';
+			intf.rtscts   = false;
+			intf.parity   = 'none';
 			intf.type     = 'isp2';
 		}
 	}
@@ -105,7 +105,7 @@ function loadModules() {
 	// Populate interface, options, and protocol
 	// using above rendered variables
 	intf.intf = require(`intf-${intf.type}`);
-	intf.opts = serialOpts(intf.baudRate, intf.pari, intf.coll);
+	intf.opts = serialOpts(intf.baudRate, intf.parity, intf.rtscts);
 
 	if (intf.type === 'bmw') {
 		proto.proto = require(`proto-${intf.type}`);
