@@ -1,0 +1,26 @@
+bit0 bit1 bit2 bit3 bit4 bit5 bit6 bit7
+0x01 0x02 0x04 0x08 0x10 0x20 0x40 0x80
+
+
+byte 0 - RPM?
+byte 1 - RPM
+
+byte 2
+
+byte 3
+
+byte 4 - throttle pedal?
+byte 5 - throttle pedal?
+
+// byte 6
+byte 6, bit 0 - 0x01 - when key in run position, before starting
+byte 6, bit 1 - 0x02 - ?
+byte 6, bit 2 - 0x04 - running, in fuel cut
+byte 6, bit 3 - 0x08 - running, fueling active
+byte 6, bit 4 - 0x10 - running, WOT or near WOT
+byte 6, bit 5 - 0x20 - when key switched to acc or off, after being in run
+byte 6, bit 6 - 0x40 - right before full shutdown, after key switched to off for ~10 sec
+
+
+byte 7 - throttle actual?
+byte 8 - throttle actual? something additional too

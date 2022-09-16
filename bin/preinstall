@@ -7,8 +7,6 @@ ARRAY_LINK=(
 'eslint'
 'eslint-plugin-import'
 'eslint-plugin-node'
-'eslint-plugin-promise'
-'eslint-plugin-standard'
 'express'
 'json-socket'
 'jsonfile'
@@ -17,6 +15,12 @@ ARRAY_LINK=(
 'socket.io'
 'trucolor'
 )
+
+
+# Only run on Raspberry Pi
+[[ ! -s /etc/os-release ]] && exit 0
+grep -q raspbian /etc/os-release || exit 0
+
 
 FILE_TMP="$(mktemp)"
 

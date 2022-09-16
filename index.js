@@ -33,15 +33,6 @@ function serial_opts(parity, collision_detection) {
 			parity,
 			rtscts   : collision_detection,
 		},
-		open : {
-			cts    : collision_detection,
-			dsr    : false,
-			rts    : collision_detection,
-			rtscts : collision_detection,
-			xany   : false,
-			xoff   : false,
-			xon    : false,
-		},
 	};
 } // serial_opts(parity, collision_detection)
 
@@ -53,6 +44,7 @@ async function load_modules() {
 		config : {
 			debug : process.env.BMWI_DEBUG_INTERFACE || false,
 		},
+
 		intf : null,
 		opts : {},
 		path : config.intf[app_intf],
@@ -64,10 +56,14 @@ async function load_modules() {
 	// Vehicle data bus protocol config
 	proto = {
 		config : {
-			debug      : process.env.BMWI_DEBUG_PROTOCOL || false,
-			length_min : 5,
-			length_max : 1000,
-			error_max  : 50,
+			debug : process.env.BMWI_DEBUG_PROTOCOL || false,
+
+			msg_length_min : 5,
+			msg_length_max : 60,
+
+			queue_length_max : 1000,
+
+			error_max : 50,
 		},
 		proto : null,
 	};
@@ -122,11 +118,6 @@ async function term_config() {
 		log.msg('Caught SIGINT');
 		await term();
 	});
-
-	process.on('exit', () => {
-		config.console.output = true;
-		log.msg('Caught exit event');
-	});
 } // async term_config()
 
 // Global init
@@ -162,4 +153,4 @@ async function term() {
 
 
 // FASTEN SEATBELTS
-init();
+(async () => { await init(); })();
