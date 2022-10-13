@@ -23,18 +23,19 @@ update = new (require('update'))();
 
 
 // Render serialport options object
-function serialOpts(baudRate, parity, rtscts) {
+function serialOpts(baudRate, parity) {
 	// DBUS+IBUS+KBUS : 9600 8e1
 
 	return {
 		init : {
 			autoOpen : false,
+			rtscts   : config.options.ctsrts_retry[app_intf],
+
 			baudRate,
 			parity,
-			rtscts,
 		},
 	};
-} // serialOpts(baudRate, parity, rtscts)
+} // serialOpts(baudRate, parity)
 
 // Function to load modules that require data from config object,
 // AFTER the config object is loaded
@@ -45,12 +46,7 @@ function loadModules() {
 			debug : process.env.BMWI_DEBUG_INTERFACE || false,
 		},
 
-		intf   : null,
-		opts   : {},
-		parity : null,
-		path   : config.intf[app_intf],
-		rtscts : null,
-		type   : null,
+		path : config.intf[app_intf],
 	};
 
 	// Vehicle data bus protocol config
@@ -69,46 +65,47 @@ function loadModules() {
 		proto : null,
 	};
 
+
+	let intfBaudRate;
+	let intfParity;
+	let intfType;
+
 	// Load vehicle interface and protocol libs
 	switch (app_intf) {
 		case 'can0' :
 		case 'can1' : {
-			intf.type = 'can';
+			intfType = 'can';
 			break;
 		}
 
 		case 'dbus' : {
 			intf.baudRate = 9600;
-			intf.rtscts   = false;
-			intf.parity   = 'even';
-			intf.type     = 'bmw';
+			intfParity    = 'even';
+			intfType      = 'bmw';
 			break;
 		}
 
 		case 'ibus' :
 		case 'kbus' : {
-			intf.baudRate = 9600;
-			intf.rtscts   = true;
-			intf.parity   = 'even';
-			intf.type     = 'bmw';
+			intfBaudRate = 9600;
+			intfParity   = 'even';
+			intfType     = 'bmw';
 			break;
 		}
 
 		case 'isp2' : {
-			intf.baudRate = 19200;
-			intf.rtscts   = false;
-			intf.parity   = 'none';
-			intf.type     = 'isp2';
+			intfBaudRate = 19200;
+			intfParity   = 'none';
+			intfType     = 'isp2';
 		}
 	}
 
-	// Populate interface, options, and protocol
-	// using above rendered variables
-	intf.intf = require(`intf-${intf.type}`);
-	intf.opts = serialOpts(intf.baudRate, intf.parity, intf.rtscts);
+	// Populate interface, options, and protocol using above rendered variables
+	intf.intf = require(`intf-${intfType}`);
+	intf.opts = serialOpts(intfBaudRate, intfParity);
 
-	if (intf.type === 'bmw') {
-		proto.proto = require(`proto-${intf.type}`);
+	if (intfType === 'bmw') {
+		proto.proto = require(`proto-${intfType}`);
 	}
 
 	log.msg('Loaded modules');
