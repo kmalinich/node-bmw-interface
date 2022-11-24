@@ -7,7 +7,6 @@
 		"url": "https://github.com/kmalinich/node-bmw-interface/issues"
 	},
 	"dependencies": {
-		"@serialport/parser-byte-length": "^10.5.0",
 		"body-parser": "^1.20.1",
 		"callers-path": "^1.0.5",
 		"defaults-deep": "^0.2.4",
@@ -44,6 +43,7 @@
 	"main": "./index.js",
 	"name": "node-bmw-interface",
 	"optionalDependencies": {
+		"@serialport/parser-byte-length": "^10.5.0",
 		"serialport": "10.5.0",
 		"socketcan": "^4.0.1"
 	},
