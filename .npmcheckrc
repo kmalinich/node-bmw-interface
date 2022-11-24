@@ -1,0 +1,5 @@
+depcheck:
+  ignoreMatches: ["bitmask", "bus", "bus-*", "config-*", "eslint-*", "hex", "json", "json-colorizer", "log-output", "num", "socket", "update", "status-*"]
+
+
+# vim: set filetype=yaml ts=2 sw=2 tw=0 et :

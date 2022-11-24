@@ -16,7 +16,7 @@
 		"jsonfile": "^6.1.0",
 		"object-path": "^0.11.8",
 		"rfdc": "^1.3.0",
-		"trucolor": "1.0.6"
+		"trucolor": "2.0.4"
 	},
 	"description": "BMW CANBUS/IBUS/KBUS server",
 	"devDependencies": {
