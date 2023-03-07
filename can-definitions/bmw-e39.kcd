@@ -50,9 +50,9 @@
 			<Signal name="dme_status_tachometer_light_2"            offset="30" length="1"><Value unit="boolean" slope="1" intercept="0" min="0" max="1" /></Signal>
 
 			<!-- Byte 5 -->
-			<Signal name="dme_status_oil_pressure_light" offset="40" length="1"><Value unit="boolean" slope="-1" intercept="0" min="0" max="1" /></Signal>
+			<Signal name="dme_status_battery_light"      offset="40" length="1"><Value unit="boolean" slope="-1" intercept="0" min="0" max="1" /></Signal>
 			<Signal name="dme_status_ac_switch"          offset="43" length="1"><Value unit="boolean" slope="1"  intercept="0" min="0" max="1" /></Signal>
-			<Signal name="dme_status_battery_light"      offset="44" length="1"><Value unit="boolean" slope="-1" intercept="0" min="0" max="1" /></Signal>
+			<Signal name="dme_status_oil_pressure_light" offset="44" length="1"><Value unit="boolean" slope="-1" intercept="0" min="0" max="1" /></Signal>
 		</Message>
 
 		<Message id="0x710" name="DME_710">
