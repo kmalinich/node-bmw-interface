@@ -19,7 +19,7 @@
 	},
 	"description": "BMW CANBUS/IBUS/KBUS server",
 	"devDependencies": {
-		"eslint": "^8.36.0",
+		"eslint": "^8.51.0",
 		"eslint-plugin-node": "^11.1.0"
 	},
 	"directories": {
@@ -43,9 +43,9 @@
 	"main": "./index.js",
 	"name": "node-bmw-interface",
 	"optionalDependencies": {
-		"@serialport/parser-byte-length": "^10.5.0",
-		"serialport": "10.5.0",
-		"socketcan": "^4.0.3"
+		"@serialport/parser-byte-length": "^12.0.0",
+		"serialport": "12.0.0",
+		"socketcan": "^4.0.4"
 	},
 	"repository": {
 		"type": "git",
