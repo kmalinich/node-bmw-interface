@@ -22,18 +22,16 @@ socket  = require('socket');
 update = new (require('update'))();
 
 
-// Render serialport options object
+// Render serial port options object
 function serialOpts(baudRate, parity) {
 	// DBUS+IBUS+KBUS : 9600 8e1
 
 	return {
-		init : {
-			autoOpen : false,
-			rtscts   : config.options.ctsrts_retry[app_intf],
+		autoOpen : false,
+		rtscts   : config.options.ctsrts_retry[app_intf],
 
-			baudRate,
-			parity,
-		},
+		baudRate,
+		parity,
 	};
 } // serialOpts(baudRate, parity)
 
