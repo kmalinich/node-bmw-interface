@@ -28,7 +28,8 @@ function serialOpts(baudRate, parity) {
 
 	return {
 		autoOpen : false,
-		rtscts   : config.options.ctsrts_retry[app_intf],
+		rtscts   : true,
+		// rtscts   : config.options.ctsrts_retry[app_intf],
 
 		baudRate,
 		parity,
@@ -150,7 +151,7 @@ async function init() {
 	// Enable console output
 	config = { console : { output : true } };
 
-	log.msg(`Initializing interface: '${app_intf}'`);
+	log.msg(`Initializing network interface: '${app_intf}'`);
 
 	// Configure term event listeners
 	process.on('exit',    async () => signalTerm('exit'));
@@ -165,7 +166,7 @@ async function init() {
 	await intf.intf.init(); // Open defined interface
 	await socket.init();    // Open socket server
 
-	log.msg(`Initialized interface: '${app_intf}'`);
+	log.msg(`Initialized network interface '${app_intf}'`);
 } // async init()
 
 // FASTEN SEATBELTS
