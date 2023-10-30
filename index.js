@@ -78,9 +78,9 @@ function loadModules() {
 		}
 
 		case 'dbus' : {
-			intfbaudRate = 9600;
-			intfParity    = 'even';
-			intfType      = 'bmw';
+			intfBaudRate = 9600;
+			intfParity   = 'even';
+			intfType     = 'bmw';
 			break;
 		}
 
