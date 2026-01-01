@@ -5,16 +5,29 @@
 	<Document name="BMW-E39" version="0.0.1" author="kennygprs@gmail.com">BMW E39 CANBUS definition</Document>
 
 	<Node id="12" name="DME" />
+	<Node id="50" name="MFL" />
+	<Node id="56" name="ASC" />
+	<Node id="80" name="IKE" />
 
 	<Bus name="PTCAN">
+		<Message id="0x1F8" name="ASC4" length="8" interval="20" triggered="false" format="standard" remote="false">
+			<Producer>
+				<NodeRef id="56" />
+			</Producer>
+
+			<!-- Byte 2 -->
+			<Signal name="vehicle_dsc_brake_pressure_pedal" offset="16" length="8"><Value unit="bar" slope="1" intercept="0" min="0" max="255" /></Signal>
+		</Message>
+
+
 		<Message id="0x316" name="DME_316" length="8" interval="10" triggered="false" format="standard" remote="false">
 			<Producer>
 				<NodeRef id="12" />
 			</Producer>
 
 			<!-- testing these ignition status bits -->
-			<Signal name="engine.ignition_0" offset="0" length="1" />
-			<Signal name="engine.ignition_1" offset="1" length="1" />
+			<Signal name="engine_ignition_0" offset="0" length="1" />
+			<Signal name="engine_ignition_1" offset="1" length="1" />
 
 			<Signal name="engine_dsc_ok"              offset="2" length="1" />
 			<Signal name="engine_smg_present"         offset="3" length="1" />
@@ -22,11 +35,11 @@
 			<Signal name="engine_ac_clutch"           offset="6" length="1" />
 			<Signal name="engine_maf_error"           offset="7" length="1" />
 
-			<Signal name="engine_torque_after_interventions"  offset="8"  length="8" ><Value unit="percent" slope="0.3921568627450980" max="100"   /></Signal>
-			<Signal name="engine_rpm"                         offset="16" length="16"><Value unit="percent" slope="0.15625"            max="10000" /></Signal>
-			<Signal name="engine_torque_before_interventions" offset="32" length="8" ><Value unit="percent" slope="0.3921568627450980" max="100"   /></Signal>
-			<Signal name="engine_torque_loss"                 offset="40" length="8" ><Value unit="percent" slope="0.3921568627450980" max="100"   /></Signal>
-			<Signal name="engine_torque_output"               offset="56" length="8" ><Value unit="percent" slope="0.3921568627450980" max="100"   /></Signal>
+			<Signal name="engine_torque_after_interventions"  offset="8"  length="8" ><Value unit="percent" slope="0.390625" max="100"   /></Signal>
+			<Signal name="engine_rpm"                         offset="16" length="16"><Value unit="rpm"     slope="0.15625"  max="10000" /></Signal>
+			<Signal name="engine_torque_before_interventions" offset="32" length="8" ><Value unit="percent" slope="0.390625" max="100"   /></Signal>
+			<Signal name="engine_torque_loss"                 offset="40" length="8" ><Value unit="percent" slope="0.390625" max="100"   /></Signal>
+			<Signal name="engine_torque_output"               offset="56" length="8" ><Value unit="percent" slope="0.390625" max="100"   /></Signal>
 		</Message>
 
 		<Message id="0x545" name="DME_545" length="8" interval="10" triggered="false" format="standard" remote="false">
@@ -71,13 +84,13 @@
 				<NodeRef id="12" />
 			</Producer>
 
-			<Signal name="temperature_coolant_c" offset="0"  length="8" ><Value unit="celsius" slope="1"                  intercept="-48" min="-48" max="207"   /></Signal>
-			<Signal name="temperature_intake_c"  offset="8"  length="8" ><Value unit="celsius" slope="1"                  intercept="-48" min="-48" max="207"   /></Signal>
-			<Signal name="temperature_exhaust_c" offset="16" length="8" ><Value unit="celsius" slope="4"                  intercept="0"   min="0"   max="1020"  /></Signal>
-			<Signal name="temperature_oil_c"     offset="24" length="8" ><Value unit="celsius" slope="1"                  intercept="-48" min="-48" max="207"   /></Signal>
-			<Signal name="battery_voltage"       offset="32" length="8" ><Value unit="volts"   slope="0.1"                intercept="0"   min="0"   max="25.5"  /></Signal>
-			<Signal name="vehicle_speed"         offset="40" length="16"><Value unit="kph"     slope="1"                  intercept="0"   min="0"   max="65535" /></Signal>
-			<Signal name="fuel_pump_duty"        offset="56" length="8" ><Value unit="percent" slope="0.3921568627450980" intercept="0"   min="0"   max="100"   /></Signal>
+			<Signal name="temperature_coolant_c" offset="0"  length="8" ><Value unit="celsius" slope="1"        intercept="-48" min="-48" max="207"   /></Signal>
+			<Signal name="temperature_intake_c"  offset="8"  length="8" ><Value unit="celsius" slope="1"        intercept="-48" min="-48" max="207"   /></Signal>
+			<Signal name="temperature_exhaust_c" offset="16" length="8" ><Value unit="celsius" slope="4"        intercept="0"   min="0"   max="1020"  /></Signal>
+			<Signal name="temperature_oil_c"     offset="24" length="8" ><Value unit="celsius" slope="1"        intercept="-48" min="-48" max="207"   /></Signal>
+			<Signal name="battery_voltage"       offset="32" length="8" ><Value unit="volts"   slope="0.1"      intercept="0"   min="0"   max="25.5"  /></Signal>
+			<Signal name="vehicle_speed"         offset="40" length="16"><Value unit="kph"     slope="1"        intercept="0"   min="0"   max="65535" /></Signal>
+			<Signal name="fuel_pump_duty"        offset="56" length="8" ><Value unit="percent" slope="0.390625" intercept="0"   min="0"   max="100"   /></Signal>
 		</Message>
 	</Bus>
 </NetworkDefinition>
