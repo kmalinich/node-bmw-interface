@@ -12,16 +12,16 @@
 		"defaults-deep": "^0.2.4",
 		"express": "^5.2.1",
 		"json-socket": "^0.3.0",
-		"jsonfile": "^6.2.0",
+		"jsonfile": "^6.2.1",
 		"object-path": "^0.11.8",
 		"rfdc": "^1.4.1"
 	},
 	"description": "BMW CANBUS/IBUS/KBUS server",
 	"devDependencies": {
-		"@eslint/js": "^9.39.2",
-		"eslint": "^9.39.2",
-		"eslint-plugin-n": "^17.23.1",
-		"eslint-plugin-promise": "^7.2.1"
+		"@eslint/js": "^10.0.1",
+		"eslint": "^10.3.0",
+		"eslint-plugin-n": "^18.0.1",
+		"eslint-plugin-promise": "^7.3.0"
 	},
 	"directories": {
 		"lib": "./lib",
