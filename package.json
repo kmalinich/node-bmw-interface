@@ -28,7 +28,7 @@
 		"share": "./share"
 	},
 	"engines": {
-		"node": ">=25"
+		"node": ">=26"
 	},
 	"homepage": "https://github.com/kmalinich/node-bmw-interface#readme",
 	"keywords": [
