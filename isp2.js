@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 
-const SerialPort = require('serialport-rs');
-const ISP2       = require('./lib/parser-isp2');
+const { SerialPort } = require('serialport-rs');
+
+const ISP2 = require('./lib/parser-isp2');
 
 
-const port = new SerialPort('/dev/isp2', {
+const port = new SerialPort({
 	baudRate : 19200,
+	path     : '/dev/isp2',
 });
 
 port.on('error', console.error);
