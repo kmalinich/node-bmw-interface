@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-const SerialPort = require('serialport');
+const SerialPort = require('serialport-rs');
 const ISP2       = require('./lib/parser-isp2');
 
 
-const port = new SerialPort('/dev/ttyUSB1', {
+const port = new SerialPort('/dev/isp2', {
 	baudRate : 19200,
 });
 

@@ -1,4 +1,4 @@
-const { SerialPort } = require('serialport');
+const { SerialPort } = require('serialport-rs');
 
 const IKBUS = require('./lib/parser-ikbus');
 

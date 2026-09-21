@@ -9,7 +9,7 @@
 // https://arduino.stackexchange.com/questions/70491/decoding-serial-packets-please-check-my-work
 
 
-const SerialPort = require('serialport');
+const SerialPort = require('serialport-rs');
 const ByteLength = require('@serialport/parser-byte-length');
 
 const { Console } = require('console');
