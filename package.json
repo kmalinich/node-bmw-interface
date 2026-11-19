@@ -13,7 +13,6 @@
 		"json-socket": "^0.3.0",
 		"jsonfile": "^6.2.1",
 		"object-path": "^0.11.8",
-		"rfdc": "^1.4.1",
 		"serialport-rs": "^1.0.0"
 	},
 	"description": "BMW CANBUS/IBUS/KBUS server",
