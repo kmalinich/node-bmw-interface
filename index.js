@@ -10,16 +10,17 @@ process.title = app_name + '@' + app_intf;
 terminating = false;
 
 // node-bmw libraries
-bitmask = require('bitmask');
-bus     = require('bus');
-hex     = require('hex');
-json    = require('json');
-log     = require('log-output');
-num     = require('num');
-socket  = require('socket');
+bitmask = require('./share/bitmask.js');
+bus     = require('./share/bus.js');
+hex     = require('./share/hex.js');
+log     = require('./share/log.js');
+num     = require('./share/num.js');
+
+json   = require('./lib/json.js');
+socket = require('./lib/socket.js');
 
 // Class/event-based modules
-update = new (require('update'))();
+update = new (require('./share/update.js'))();
 
 
 // Render serial port options object
@@ -94,11 +95,11 @@ function loadModules() {
 	}
 
 	// Populate interface, options, and protocol using above rendered variables
-	intf.intf = require(`intf-${intfType}`);
+	intf.intf = require(`./lib/intf-${intfType}.js`);
 	intf.opts = serialOpts(intfBaudRate, intfParity);
 
 	if (intfType === 'bmw') {
-		proto.proto = require(`proto-${intfType}`);
+		proto.proto = require(`./lib/proto-${intfType}.js`);
 	}
 
 	log.msg('Loaded modules');

@@ -1,107 +1,44 @@
+/* eslint stylistic/quote-props : 'off' */
+
 const pluginNRules = {
-	'n/hashbang'              : 'off',
-	'n/no-missing-require'    : 'off',
-	'n/no-process-exit'       : 'off',
-	'n/no-unpublished-import' : 'off',
+	'n/hashbang'                              : 'off',
+	'n/no-deprecated-api'                     : 'error',
+	'n/no-missing-require'                    : 'off',
+	'n/no-new-require'                        : 'error',
+	'n/no-path-concat'                        : 'error',
+	'n/no-process-exit'                       : 'off',
+	'n/no-unpublished-import'                 : 'off',
+	'n/no-unsupported-features/node-builtins' : 'off',
+
+	'n/handle-callback-err' : [
+		'error',
+		'^(err|error)$',
+	],
 };
 
-const projectRules = {
-	'accessor-pairs'                : 'error',
-	'camelcase'                     : 'off',
-	'class-methods-use-this'        : 'off',
-	'constructor-super'             : 'error',
-	'eol-last'                      : 'error',
-	'eqeqeq'                        : 'warn',
-	'new-cap'                       : 'off',
-	'new-parens'                    : 'error',
-	'newline-per-chained-call'      : 'off',
-	'no-array-constructor'          : 'error',
-	'no-caller'                     : 'error',
-	'no-class-assign'               : 'error',
-	'no-compare-neg-zero'           : 'error',
-	'no-cond-assign'                : 'error',
-	'no-const-assign'               : 'error',
-	'no-control-regex'              : 'error',
-	'no-debugger'                   : 'error',
-	'no-delete-var'                 : 'error',
-	'no-dupe-args'                  : 'error',
-	'no-dupe-class-members'         : 'error',
-	'no-dupe-keys'                  : 'error',
-	'no-duplicate-case'             : 'error',
-	'no-empty-character-class'      : 'error',
-	'no-empty-pattern'              : 'error',
-	'no-eval'                       : 'error',
-	'no-ex-assign'                  : 'error',
-	'no-extend-native'              : 'error',
-	'no-extra-bind'                 : 'error',
-	'no-extra-boolean-cast'         : 'error',
-	'no-extra-semi'                 : 'error',
-	'no-fallthrough'                : 'error',
-	'no-floating-decimal'           : 'error',
-	'no-func-assign'                : 'error',
-	'no-global-assign'              : 'error',
-	'no-implied-eval'               : 'error',
-	'no-invalid-regexp'             : 'error',
-	'no-irregular-whitespace'       : 'error',
-	'no-iterator'                   : 'error',
-	'no-label-var'                  : 'error',
-	'no-lone-blocks'                : 'error',
-	'no-mixed-spaces-and-tabs'      : 'error',
-	'no-multi-spaces'               : 'off',
-	'no-multi-str'                  : 'error',
-	'no-negated-in-lhs'             : 'error',
-	'no-new'                        : 'error',
-	'no-new-func'                   : 'error',
-	'no-new-object'                 : 'error',
-	'no-new-require'                : 'error',
-	'no-new-symbol'                 : 'error',
-	'no-new-wrappers'               : 'error',
-	'no-obj-calls'                  : 'error',
-	'no-octal'                      : 'error',
-	'no-octal-escape'               : 'error',
-	'no-path-concat'                : 'error',
-	'no-proto'                      : 'error',
-	'no-redeclare'                  : 'error',
-	'no-regex-spaces'               : 'error',
-	'no-return-await'               : 'error',
-	'no-self-assign'                : 'error',
-	'no-self-compare'               : 'error',
-	'no-sequences'                  : 'error',
-	'no-shadow-restricted-names'    : 'error',
-	'no-sparse-arrays'              : 'error',
-	'no-tabs'                       : 'off',
-	'no-template-curly-in-string'   : 'error',
-	'no-this-before-super'          : 'error',
-	'no-throw-literal'              : 'error',
-	'no-trailing-spaces'            : 'error',
-	'no-undef'                      : 'error',
-	'no-undef-init'                 : 'error',
-	'no-unexpected-multiline'       : 'error',
-	'no-unmodified-loop-condition'  : 'error',
-	'no-unreachable'                : 'error',
-	'no-unsafe-finally'             : 'error',
-	'no-unsafe-negation'            : 'error',
-	'no-useless-call'               : 'error',
-	'no-useless-computed-key'       : 'error',
-	'no-useless-constructor'        : 'error',
-	'no-useless-escape'             : 'error',
-	'no-useless-rename'             : 'error',
-	'no-useless-return'             : 'error',
-	'no-whitespace-before-property' : 'error',
-	'no-with'                       : 'error',
-	'prefer-promise-reject-errors'  : 'error',
-	'space-infix-ops'               : 'warn',
-	'symbol-description'            : 'error',
-	'use-isnan'                     : 'error',
-	'yoda'                          : 'error',
+const pluginStylisticRules = {
+	'stylistic/eol-last'                      : 'error',
+	'stylistic/new-parens'                    : 'error',
+	'stylistic/newline-per-chained-call'      : 'off',
+	'stylistic/no-extra-semi'                 : 'error',
+	'stylistic/no-floating-decimal'           : 'error',
+	'stylistic/no-mixed-spaces-and-tabs'      : 'error',
+	'stylistic/no-multi-spaces'               : 'off',
+	'stylistic/no-tabs'                       : 'off',
+	'stylistic/no-trailing-spaces'            : 'error',
+	'stylistic/no-whitespace-before-property' : 'error',
+	'stylistic/space-infix-ops'               : 'warn',
 
 
-	'array-bracket-spacing' : [
+	'stylistic/arrow-parens' : [
 		'error',
-		'always',
+		'as-needed',
+		{
+			'requireForBlockBody' : false,
+		},
 	],
 
-	'arrow-spacing' : [
+	'stylistic/arrow-spacing' : [
 		'error',
 		{
 			'after'  : true,
@@ -109,12 +46,12 @@ const projectRules = {
 		},
 	],
 
-	'block-spacing' : [
+	'stylistic/block-spacing' : [
 		'error',
 		'always',
 	],
 
-	'brace-style' : [
+	'stylistic/brace-style' : [
 		'error',
 		'stroustrup',
 		{
@@ -122,7 +59,7 @@ const projectRules = {
 		},
 	],
 
-	'comma-dangle' : [
+	'stylistic/comma-dangle' : [
 		'error',
 		{
 			'arrays'    : 'always-multiline',
@@ -133,7 +70,7 @@ const projectRules = {
 		},
 	],
 
-	'comma-spacing' : [
+	'stylistic/comma-spacing' : [
 		'error',
 		{
 			'after'  : true,
@@ -141,27 +78,23 @@ const projectRules = {
 		},
 	],
 
-	'comma-style' : [
+	'stylistic/comma-style' : [
 		'error',
 		'last',
 	],
 
-	'curly' : [
-		'error',
-		'multi-line',
-	],
-
-	'dot-location' : [
+	'stylistic/dot-location' : [
 		'error',
 		'property',
 	],
 
-	'func-call-spacing' : [
+
+	'stylistic/function-call-spacing' : [
 		'error',
 		'never',
 	],
 
-	'generator-star-spacing' : [
+	'stylistic/generator-star-spacing' : [
 		'error',
 		{
 			'after'  : true,
@@ -169,12 +102,7 @@ const projectRules = {
 		},
 	],
 
-	'handle-callback-err' : [
-		'error',
-		'^(err|error)$',
-	],
-
-	'indent' : [
+	'stylistic/indent' : [
 		'error',
 		'tab',
 		{
@@ -182,22 +110,23 @@ const projectRules = {
 		},
 	],
 
-	'key-spacing' : [
+	'stylistic/key-spacing' : [
 		'error',
 		{
-			'afterColon' : true,
-			'align'      : {
+			'afterColon'  : true,
+			'beforeColon' : true,
+			'mode'        : 'minimum',
+
+			'align' : {
 				'afterColon'  : true,
 				'beforeColon' : true,
 				'mode'        : 'strict',
 				'on'          : 'colon',
 			},
-			'beforeColon' : true,
-			'mode'        : 'minimum',
 		},
 	],
 
-	'keyword-spacing' : [
+	'stylistic/keyword-spacing' : [
 		'error',
 		{
 			'after'  : true,
@@ -205,38 +134,78 @@ const projectRules = {
 		},
 	],
 
-	'linebreak-style' : [
+	'stylistic/linebreak-style' : [
 		'error',
 		'unix',
 	],
 
-
-	'no-constant-condition' : [
+	'stylistic/list-style' : [
 		'error',
 		{
-			'checkLoops' : false,
+			empty : 'ignore',
+
+			singleLine : {
+				maxItems : 10,
+				spacing  : 'never',
+			},
+
+			multiLine : {
+				minItems : 10,
+			},
+
+			overrides : {
+				'[]' : {
+					singleLine : {
+						spacing : 'always',
+					},
+					multiLine : {
+						minItems : 0,
+					},
+				},
+				'{}' : {
+					singleLine : {
+						maxItems : 1000,
+						spacing  : 'always',
+					},
+					multiLine : {
+						minItems : 0,
+					},
+				},
+			},
 		},
 	],
 
-	'no-extra-parens' : [
+	'stylistic/max-statements-per-line' : [
+		'error',
+		{
+			'max' : 3,
+		},
+	],
+
+	'stylistic/no-extra-parens' : [
 		'error',
 		'functions',
 	],
 
-	'no-inner-declarations' : [
+	'stylistic/semi' : [
 		'error',
-		'functions',
+		'always',
 	],
 
-	'no-labels' : [
+	'stylistic/semi-spacing' : [
 		'error',
 		{
-			'allowLoop'   : false,
-			'allowSwitch' : false,
+			'after'  : true,
+			'before' : false,
 		},
 	],
 
-	'no-mixed-operators' : [
+	'stylistic/semi-style' : [
+		'error',
+		'last',
+	],
+
+	'stylistic/no-mixed-operators' : [
 		'error',
 		{
 			'allowSamePrecedence' : true,
@@ -259,12 +228,228 @@ const projectRules = {
 		},
 	],
 
-	'no-multiple-empty-lines' : [
+	'stylistic/no-multiple-empty-lines' : [
 		'error',
 		{
 			'max'    : 2,
 			'maxBOF' : 0,
 			'maxEOF' : 0,
+		},
+	],
+
+	'stylistic/operator-linebreak' : [
+		'error',
+		'after',
+		{
+			'overrides' : {
+				':' : 'before',
+				'?' : 'before',
+			},
+		},
+	],
+
+	'stylistic/padded-blocks' : [
+		'error',
+		{
+			'blocks'   : 'never',
+			'classes'  : 'never',
+			'switches' : 'never',
+		},
+	],
+
+	'stylistic/quotes' : [
+		'error',
+		'single',
+		{
+			'allowTemplateLiterals' : 'always',
+			'avoidEscape'           : true,
+		},
+	],
+
+	'stylistic/rest-spread-spacing' : [
+		'error',
+		'never',
+	],
+
+	'stylistic/space-before-blocks' : [
+		'error',
+		'always',
+	],
+
+	'stylistic/space-before-function-paren' : [
+		'error',
+		{
+			'anonymous'  : 'always',
+			'asyncArrow' : 'always',
+			'named'      : 'never',
+		},
+	],
+
+	'stylistic/space-in-parens' : [
+		'error',
+		'never',
+	],
+
+	'stylistic/space-unary-ops' : [
+		'error',
+		{
+			'nonwords' : false,
+			'words'    : true,
+		},
+	],
+
+	'stylistic/spaced-comment' : [
+		'error',
+		'always',
+		{
+			'block' : {
+				'balanced'   : true,
+				'exceptions' : [
+					'*',
+				],
+				'markers' : [
+					'*package',
+					'!',
+					',',
+					':',
+					'::',
+					'flow-include',
+				],
+			},
+			'line' : {
+				'markers' : [
+					'*package',
+					'!',
+					'/',
+					',',
+				],
+			},
+		},
+	],
+
+	'stylistic/template-curly-spacing' : [
+		'error',
+		'never',
+	],
+
+	'stylistic/template-tag-spacing' : [
+		'error',
+		'never',
+	],
+
+	'stylistic/wrap-iife' : [
+		'error',
+		'any',
+		{
+			'functionPrototypeMethods' : true,
+		},
+	],
+
+	'stylistic/yield-star-spacing' : [
+		'error',
+		'both',
+	],
+};
+
+
+const projectRules = {
+	'accessor-pairs'               : 'error',
+	'camelcase'                    : 'off',
+	'class-methods-use-this'       : 'off',
+	'constructor-super'            : 'error',
+	'eqeqeq'                       : 'warn',
+	'new-cap'                      : 'off',
+	'no-array-constructor'         : 'error',
+	'no-caller'                    : 'error',
+	'no-class-assign'              : 'error',
+	'no-compare-neg-zero'          : 'error',
+	'no-cond-assign'               : 'error',
+	'no-const-assign'              : 'error',
+	'no-control-regex'             : 'error',
+	'no-debugger'                  : 'error',
+	'no-delete-var'                : 'error',
+	'no-dupe-args'                 : 'error',
+	'no-dupe-class-members'        : 'error',
+	'no-dupe-keys'                 : 'error',
+	'no-duplicate-case'            : 'error',
+	'no-empty-character-class'     : 'error',
+	'no-empty-pattern'             : 'error',
+	'no-eval'                      : 'error',
+	'no-ex-assign'                 : 'error',
+	'no-extend-native'             : 'error',
+	'no-extra-bind'                : 'error',
+	'no-extra-boolean-cast'        : 'error',
+	'no-fallthrough'               : 'error',
+	'no-func-assign'               : 'error',
+	'no-global-assign'             : 'error',
+	'no-implied-eval'              : 'error',
+	'no-invalid-regexp'            : 'error',
+	'no-irregular-whitespace'      : 'error',
+	'no-iterator'                  : 'error',
+	'no-label-var'                 : 'error',
+	'no-lone-blocks'               : 'error',
+	'no-multi-str'                 : 'error',
+	'no-new'                       : 'error',
+	'no-new-func'                  : 'error',
+	'no-new-native-nonconstructor' : 'error',
+	'no-new-wrappers'              : 'error',
+	'no-obj-calls'                 : 'error',
+	'no-object-constructor'        : 'error',
+	'no-octal'                     : 'error',
+	'no-octal-escape'              : 'error',
+	'no-proto'                     : 'error',
+	'no-redeclare'                 : 'error',
+	'no-regex-spaces'              : 'error',
+	'no-self-assign'               : 'error',
+	'no-self-compare'              : 'error',
+	'no-sequences'                 : 'error',
+	'no-shadow-restricted-names'   : 'error',
+	'no-sparse-arrays'             : 'error',
+	'no-template-curly-in-string'  : 'error',
+	'no-this-before-super'         : 'error',
+	'no-throw-literal'             : 'error',
+	'no-undef'                     : 'error',
+	'no-undef-init'                : 'error',
+	'no-unexpected-multiline'      : 'error',
+	'no-unmodified-loop-condition' : 'error',
+	'no-unreachable'               : 'error',
+	'no-unsafe-finally'            : 'error',
+	'no-unsafe-negation'           : 'error',
+	'no-useless-call'              : 'error',
+	'no-useless-computed-key'      : 'error',
+	'no-useless-constructor'       : 'error',
+	'no-useless-escape'            : 'error',
+	'no-useless-rename'            : 'error',
+	'no-useless-return'            : 'error',
+	'no-with'                      : 'error',
+	'prefer-promise-reject-errors' : 'error',
+	'symbol-description'           : 'error',
+	'use-isnan'                    : 'error',
+	'yoda'                         : 'error',
+
+
+	'curly' : [
+		'error',
+		'multi-line',
+	],
+
+	'no-constant-condition' : [
+		'error',
+		{
+			'checkLoops' : false,
+		},
+	],
+
+	'no-inner-declarations' : [
+		'error',
+		'functions',
+	],
+
+	'no-labels' : [
+		'error',
+		{
+			'allowLoop'   : false,
+			'allowSwitch' : false,
 		},
 	],
 
@@ -302,18 +487,6 @@ const projectRules = {
 		},
 	],
 
-	'object-curly-spacing' : [
-		'error',
-		'always',
-	],
-
-	'object-property-newline' : [
-		'error',
-		{
-			'allowMultiplePropertiesPerLine' : true,
-		},
-	],
-
 	'one-var' : [
 		'error',
 		{
@@ -321,123 +494,6 @@ const projectRules = {
 		},
 	],
 
-	'operator-linebreak' : [
-		'error',
-		'after',
-		{
-			'overrides' : {
-				':' : 'before',
-				'?' : 'before',
-			},
-		},
-	],
-
-	'padded-blocks' : [
-		'error',
-		{
-			'blocks'   : 'never',
-			'classes'  : 'never',
-			'switches' : 'never',
-		},
-	],
-
-	'quotes' : [
-		'error',
-		'single',
-		{
-			'allowTemplateLiterals' : true,
-			'avoidEscape'           : true,
-		},
-	],
-
-	'rest-spread-spacing' : [
-		'error',
-		'never',
-	],
-
-	'semi' : [
-		'error',
-		'always',
-	],
-
-	'semi-spacing' : [
-		'error',
-		{
-			'after'  : true,
-			'before' : false,
-		},
-	],
-
-	'semi-style' : [
-		'error',
-		'last',
-	],
-
-	'space-before-blocks' : [
-		'error',
-		'always',
-	],
-
-	'space-before-function-paren' : [
-		'error',
-		{
-			'anonymous'  : 'always',
-			'asyncArrow' : 'always',
-			'named'      : 'never',
-		},
-	],
-
-	'space-in-parens' : [
-		'error',
-		'never',
-	],
-
-	'space-unary-ops' : [
-		'error',
-		{
-			'nonwords' : false,
-			'words'    : true,
-		},
-	],
-
-	'spaced-comment' : [
-		'error',
-		'always',
-		{
-			'block' : {
-				'balanced'   : true,
-				'exceptions' : [
-					'*',
-				],
-				'markers' : [
-					'*package',
-					'!',
-					',',
-					':',
-					'::',
-					'flow-include',
-				],
-			},
-			'line' : {
-				'markers' : [
-					'*package',
-					'!',
-					'/',
-					',',
-				],
-			},
-		},
-	],
-
-	'template-curly-spacing' : [
-		'error',
-		'never',
-	],
-
-	'template-tag-spacing' : [
-		'error',
-		'never',
-	],
 
 	'unicode-bom' : [
 		'error',
@@ -451,20 +507,9 @@ const projectRules = {
 		},
 	],
 
-	'wrap-iife' : [
-		'error',
-		'any',
-		{
-			'functionPrototypeMethods' : true,
-		},
-	],
-
-	'yield-star-spacing' : [
-		'error',
-		'both',
-	],
 
 	...pluginNRules,
+	...pluginStylisticRules,
 };
 
 
